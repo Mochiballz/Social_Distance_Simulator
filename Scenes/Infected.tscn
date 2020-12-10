@@ -1,0 +1,73 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://Resources/Sprites/Temp_Character_Anim.tres" type="SpriteFrames" id=1]
+[ext_resource path="res://Scripts/Infected.gd" type="Script" id=2]
+[ext_resource path="res://Resources/Sprites/temp_danger_zone.png" type="Texture" id=3]
+[ext_resource path="res://Scripts/InfectionRange.gd" type="Script" id=4]
+
+[sub_resource type="CircleShape2D" id=1]
+radius = 93.0
+
+[sub_resource type="RectangleShape2D" id=2]
+extents = Vector2( 32, 8 )
+
+[node name="Infected" type="KinematicBody2D"]
+collision_layer = 2
+collision_mask = 0
+script = ExtResource( 2 )
+
+[node name="InfectionRange" type="Area2D" parent="."]
+script = ExtResource( 4 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="InfectionRange"]
+shape = SubResource( 1 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="InfectionSprite" type="Sprite" parent="InfectionRange/CollisionShape2D"]
+position = Vector2( 2.38419e-07, 2.38419e-07 )
+scale = Vector2( 0.8, 0.8 )
+texture = ExtResource( 3 )
+
+[node name="OverlapLines" type="Node2D" parent="InfectionRange"]
+visible = false
+
+[node name="SpriteGroup" type="Node2D" parent="."]
+
+[node name="AnimatedSprite" type="AnimatedSprite" parent="SpriteGroup"]
+scale = Vector2( 0.4, 0.4 )
+frames = ExtResource( 1 )
+animation = "run"
+playing = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2( 0, 48 )
+shape = SubResource( 2 )
+
+[node name="VisibilityNotifier2D" type="VisibilityNotifier2D" parent="."]
+visible = false
+position = Vector2( 0, 1.77636e-15 )
+scale = Vector2( 3.2, 3.72414 )
+rect = Rect2( -10, -14, 20, 29 )
+
+[node name="CoughTimer" type="Timer" parent="."]
+
+[node name="CoughDuration" type="Timer" parent="."]
+
+[node name="BehaviorTimer" type="Timer" parent="."]
+one_shot = true
+
+[node name="BehaviorDuration" type="Timer" parent="."]
+one_shot = true
+[connection signal="area_entered" from="InfectionRange" to="InfectionRange" method="_on_InfectionRange_area_entered"]
+[connection signal="area_exited" from="InfectionRange" to="InfectionRange" method="_on_InfectionRange_area_exited"]
+[connection signal="body_entered" from="InfectionRange" to="InfectionRange" method="_on_InfectionRange_body_entered"]
+[connection signal="screen_exited" from="VisibilityNotifier2D" to="." method="_on_VisibilityNotifier2D_screen_exited"]
+[connection signal="timeout" from="CoughTimer" to="." method="_on_CoughTimer_timeout"]
+[connection signal="timeout" from="CoughDuration" to="." method="_on_CoughDuration_timeout"]
+[connection signal="timeout" from="BehaviorTimer" to="." method="_on_BehaviorTimer_timeout"]
+[connection signal="timeout" from="BehaviorDuration" to="." method="_on_BehaviorDuration_timeout"]

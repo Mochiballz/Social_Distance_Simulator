@@ -1,0 +1,93 @@
+[gd_scene load_steps=32 format=2]
+
+[ext_resource path="res://Resources/SDS_Player_Animation_Test/test_player0002.png" type="Texture" id=1]
+[ext_resource path="res://Resources/SDS_Player_Animation_Test/test_player0003.png" type="Texture" id=2]
+[ext_resource path="res://Resources/SDS_Player_Animation_Test/test_player0000.png" type="Texture" id=3]
+[ext_resource path="res://Resources/SDS_Player_Animation_Test/test_player0008.png" type="Texture" id=4]
+[ext_resource path="res://Resources/SDS_Player_Animation_Test/test_player0001.png" type="Texture" id=5]
+[ext_resource path="res://Resources/SDS_Player_Animation_Test/test_player0005.png" type="Texture" id=6]
+[ext_resource path="res://Resources/SDS_Player_Animation_Test/test_player0006.png" type="Texture" id=7]
+[ext_resource path="res://Resources/SDS_Player_Animation_Test/test_player0004.png" type="Texture" id=8]
+[ext_resource path="res://Resources/SDS_Player_Animation_Test/test_player0007.png" type="Texture" id=9]
+[ext_resource path="res://Resources/SDS_Player_Animation_Test/test_player0009.png" type="Texture" id=10]
+[ext_resource path="res://Resources/SDS_Player_Animation_Test/test_player0010.png" type="Texture" id=11]
+[ext_resource path="res://Resources/SDS_Player_Animation_Test/test_player0011.png" type="Texture" id=12]
+[ext_resource path="res://Resources/Adventurer Character Animations Pack/Animations/jump/jump_4.png" type="Texture" id=17]
+[ext_resource path="res://Resources/Adventurer Character Animations Pack/Animations/jump/jump_5.png" type="Texture" id=18]
+[ext_resource path="res://Resources/Adventurer Character Animations Pack/Animations/hurt/hurt_0.png" type="Texture" id=19]
+[ext_resource path="res://Resources/Adventurer Character Animations Pack/Animations/hurt/hurt_3.png" type="Texture" id=20]
+[ext_resource path="res://Resources/Adventurer Character Animations Pack/Animations/hurt/hurt_2.png" type="Texture" id=21]
+[ext_resource path="res://Resources/Adventurer Character Animations Pack/Animations/hurt/hurt_1.png" type="Texture" id=22]
+[ext_resource path="res://Resources/Adventurer Character Animations Pack/Animations/jump/jump_1.png" type="Texture" id=23]
+[ext_resource path="res://Resources/Adventurer Character Animations Pack/Animations/jump/jump_2.png" type="Texture" id=24]
+[ext_resource path="res://Resources/Adventurer Character Animations Pack/Animations/hurt/hurt_7.png" type="Texture" id=25]
+[ext_resource path="res://Resources/Adventurer Character Animations Pack/Animations/hurt/hurt_5.png" type="Texture" id=26]
+[ext_resource path="res://Resources/Adventurer Character Animations Pack/Animations/jump/jump_3.png" type="Texture" id=27]
+[ext_resource path="res://Resources/Adventurer Character Animations Pack/Animations/hurt/hurt_4.png" type="Texture" id=28]
+[ext_resource path="res://Resources/Adventurer Character Animations Pack/Animations/hurt/hurt_6.png" type="Texture" id=29]
+[ext_resource path="res://Resources/Adventurer Character Animations Pack/Animations/hurt/hurt_8.png" type="Texture" id=30]
+[ext_resource path="res://Resources/Adventurer Character Animations Pack/Animations/jump/jump_0.png" type="Texture" id=31]
+[ext_resource path="res://Scripts/Player.gd" type="Script" id=32]
+
+[sub_resource type="SpriteFrames" id=1]
+animations = [ {
+"frames": [ ExtResource( 2 ) ],
+"loop": true,
+"name": "idle",
+"speed": 12.0
+}, {
+"frames": [ ExtResource( 31 ), ExtResource( 23 ), ExtResource( 24 ), ExtResource( 27 ), ExtResource( 17 ), ExtResource( 18 ) ],
+"loop": false,
+"name": "jump",
+"speed": 12.0
+}, {
+"frames": [ ExtResource( 19 ), ExtResource( 22 ), ExtResource( 21 ), ExtResource( 20 ), ExtResource( 28 ), ExtResource( 26 ), ExtResource( 29 ), ExtResource( 25 ), ExtResource( 30 ) ],
+"loop": false,
+"name": "hurt",
+"speed": 12.0
+}, {
+"frames": [ ExtResource( 3 ), ExtResource( 5 ), ExtResource( 1 ), ExtResource( 2 ), ExtResource( 8 ), ExtResource( 6 ), ExtResource( 7 ), ExtResource( 9 ), ExtResource( 4 ), ExtResource( 10 ), ExtResource( 11 ), ExtResource( 12 ) ],
+"loop": true,
+"name": "run",
+"speed": 16.0
+} ]
+
+[sub_resource type="RectangleShape2D" id=2]
+extents = Vector2( 44, 76 )
+
+[sub_resource type="RectangleShape2D" id=3]
+extents = Vector2( 40, 8 )
+
+[node name="Player" type="KinematicBody2D"]
+position = Vector2( 0, -88 )
+collision_mask = 0
+script = ExtResource( 32 )
+
+[node name="AnimatedSprite" type="AnimatedSprite" parent="."]
+position = Vector2( 5.53044, 10 )
+scale = Vector2( 0.344928, 0.33913 )
+frames = SubResource( 1 )
+animation = "run"
+frame = 10
+playing = true
+
+[node name="CollisionBox" type="CollisionShape2D" parent="."]
+position = Vector2( 8, 12 )
+shape = SubResource( 2 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="DetectionBox" type="Area2D" parent="."]
+position = Vector2( 8, 80 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DetectionBox"]
+modulate = Color( 0.427451, 1, 0.247059, 1 )
+shape = SubResource( 3 )
+
+[node name="Sprite" type="Sprite" parent="DetectionBox"]
+[connection signal="area_entered" from="DetectionBox" to="." method="_on_DetectionBox_area_entered"]
+[connection signal="area_exited" from="DetectionBox" to="." method="_on_DetectionBox_area_exited"]
