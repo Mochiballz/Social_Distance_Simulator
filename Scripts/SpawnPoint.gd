@@ -53,15 +53,27 @@ func _ready():
 	
 	blast_arc = PI / 3
 	blast_layers = 1
+	
+func load_template(temp):
+	entity_behavior = temp.behavior
+	formation = temp.formation
+	aim_to_player = temp.aim_to_player
+	entity_number = temp.entity_number
+	
 
 func set_angle_vec_to_player():
 	angle_vector = global_position.direction_to(get_node("/root/World/Entities/Player").global_position)
 
 func spawn(entity_type):
 	entities.clear()
+	# Set/Reset Direction for Entities to Player/Default
 	if aim_to_player:
 		set_angle_vec_to_player()
 		direction = angle_vector
+	else:
+		angle_vector = polar2cartesian(1, -angle)
+		direction = angle_vector
+		
 	match formation:
 		group_state.WAVE_STATIC:
 			entities = create_wave_static(entity_type)
@@ -77,7 +89,6 @@ func spawn(entity_type):
 			entities = create_blast_random(entity_type)
 		_:
 			pass
-	aim_to_player = false
 
 func wave_alignment(i): # Creates the entity offset for wave formations
 	var alignment

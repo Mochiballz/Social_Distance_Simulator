@@ -77,13 +77,10 @@ func spawn_infected(infected_template):
 		
 	var spawn_point = spawners_instance.get_child(spawner_id)
 	
-	# Spawn Point Behavior/Formation
-	spawn_point.entity_behavior = infected_template.behavior
-	spawn_point.formation = infected_template.formation
-	spawn_point.aim_to_player = infected_template.aim_to_player
+	# Load Template to Spawn Point
+	spawn_point.load_template(infected_template)
 	
 	# Other Spawn Point Parameters
-	spawn_point.entity_number = infected_template.entity_number
 	spawn_point.spacing = infected.get_node("InfectionRange/CollisionShape2D").shape.radius * 2
 	
 	spawn_point.spawn(INFECTED_SCENE)
