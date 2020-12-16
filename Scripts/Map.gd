@@ -8,7 +8,7 @@ export(Vector2) var direction = Vector2.DOWN
 func add_terrain():
 	var terrain = get_child(0)
 	var new_terrain = TERRAIN_SCENE.instance()
-	new_terrain.global_position += Vector2(0, -(terrain.get_node("Road").get_used_rect().size.y * terrain.get_node("Road").cell_size.y))
+	new_terrain.global_position += Vector2(terrain.global_position.x, -(terrain.get_node("Road").get_used_rect().size.y * terrain.get_node("Road").cell_size.y))
 	add_child(new_terrain)
 
 func _ready():

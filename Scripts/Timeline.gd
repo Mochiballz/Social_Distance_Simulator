@@ -120,7 +120,7 @@ class Round:
 
 func _ready():
 	var spawnpoint_range = range(0, get_node("/root/World/Spawners").get_child_count() - 1)
-	var reduced_spawnpoints = spawnpoint_range.slice(spawnpoint_range[1], spawnpoint_range[spawnpoint_range.size() - 2])
+	var reduced_spawnpoints = spawnpoint_range.slice(spawnpoint_range[1], spawnpoint_range[spawnpoint_range.size() - 1])
 	
 	var round_0 = Round.new(80.0)
 	var round_1 = Round.new(30.0, 1)
@@ -130,8 +130,8 @@ func _ready():
 	# Round 0 + Item
 	var round_0_infected = [
 #        Speed   Number   Behavior               Formation                 Odds   Spawners             Rate Start   Rate End   Delay   AtP
-		[100,    1,       single_state.LINEAR,   group_state.WAVE_STATIC,  4,     reduced_spawnpoints, 0.2,         0.6,       0.0,    false],
-		[400,    1,       single_state.LINEAR,   group_state.WAVE_STATIC,  4,     reduced_spawnpoints, 2.0,         3.0,       0.0,    true],
+		[300,    1,       single_state.LINEAR,   group_state.WAVE_RANDOM,  4,     reduced_spawnpoints, 0.2,         0.6,       0.0,    false],
+		[400,    1,       single_state.LINEAR,   group_state.WAVE_STATIC,  4,     reduced_spawnpoints, 1.0,         2.0,       0.0,    true],
 	]
 	var item = [
 		[0,      1,       single_state.LINEAR,   group_state.WAVE_STATIC,  1,     spawnpoint_range,    15.0,        20.0]

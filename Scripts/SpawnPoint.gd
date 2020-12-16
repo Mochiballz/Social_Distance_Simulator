@@ -66,6 +66,7 @@ func set_angle_vec_to_player():
 
 func spawn(entity_type):
 	entities.clear()
+	
 	# Set/Reset Direction for Entities to Player/Default
 	if aim_to_player:
 		set_angle_vec_to_player()

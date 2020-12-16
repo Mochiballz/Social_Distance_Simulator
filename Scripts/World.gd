@@ -213,7 +213,6 @@ func _on_SpawnTimer_timeout(template, timer):
 		next.set_paused(false)
 	
 	var rand_wait_time = spawn_rng.randf_range(template.spawn_rate_start, template.spawn_rate_end)
-	print(rand_wait_time)
 	timer.set_wait_time(rand_wait_time)
 	timer.start()
 	
@@ -230,3 +229,4 @@ func _on_Quit_pressed():
 
 func _on_Timer_timeout():
 	game_over = true
+
