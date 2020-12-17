@@ -51,7 +51,8 @@ func create_spawn_timers():
 			else:
 				spawn_timer.set_paused(true)
 		
-		spawn_timer.set_wait_time(spawn_rng.randf_range(e.spawn_rate_start, e.spawn_rate_end))
+		var rand_wait_time = spawn_rng.randf_range(e.spawn_rate_start, e.spawn_rate_end)
+		spawn_timer.set_wait_time(rand_wait_time)
 		spawn_timer.connect("timeout", self, "_on_SpawnTimer_timeout", [e, spawn_timer])
 		
 		$SpawnTimers/ItemTimers.add_child(spawn_timer)
@@ -100,13 +101,10 @@ func spawn_item(item_template):
 	var spawn_point = spawners_instance.get_child(spawner_id)
 	
 	# Spawn Point Behavior/Formation
-	spawn_point.entity_behavior = item_template.behavior
-	spawn_point.formation = item_template.formation
+	spawn_point.load_template(item_template)
 	
 	# Other Spawn Point Parameters
-	spawn_point.entity_number = item_template.entity_number
-	spawn_point.angle_vector = map_direction
-	spawn_point.direction = spawn_point.angle_vector
+	spawn_point.angle = map_direction
 	
 	spawn_point.spawn(ITEM_SCENE)
 	

@@ -69,7 +69,7 @@ func _input(event):
 func _ready():
 	velocity = Vector2(0,0)
 	speed = 400
-	shift_magnitude = 24
+	shift_magnitude = 32
 	set_physics_process(true)
 	
 func _physics_process(delta):

@@ -3,7 +3,7 @@ extends Node2D
 const TERRAIN_SCENE = preload("res://Scenes/Terrain.tscn")
 
 export(float) var scroll_speed = 2
-export(Vector2) var direction = Vector2.DOWN
+export(float) var direction = 3 * PI / 2
 
 func add_terrain():
 	var terrain = get_child(0)

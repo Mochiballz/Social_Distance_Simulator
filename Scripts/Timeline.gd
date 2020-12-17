@@ -134,7 +134,7 @@ func _ready():
 		[400,    1,       single_state.LINEAR,   group_state.WAVE_STATIC,  4,     reduced_spawnpoints, 1.0,         2.0,       0.0,    true],
 	]
 	var item = [
-		[0,      1,       single_state.LINEAR,   group_state.WAVE_STATIC,  1,     spawnpoint_range,    15.0,        20.0]
+		[0,      1,       single_state.LINEAR,   group_state.WAVE_STATIC,  1,     spawnpoint_range,    2.0,        2.0]
 		
 	]
 	
