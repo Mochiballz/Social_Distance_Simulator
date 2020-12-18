@@ -2,8 +2,13 @@ extends KinematicBody2D
 
 class_name Player
 
+const SPEED_DIFF_TOLERANCE = 0.0001
+const SPEED_REDUCTION_TIME = 2.0
+
 export(Vector2) onready var velocity
 export(float) onready var speed
+export(float) onready var normal_speed
+export(float) onready var dash_speed
 
 export(bool) onready var has_revive = false
 var overlapping_infected = false
@@ -26,6 +31,10 @@ func motion_input():
 	velocity = input
 	emit_signal("velocity_change", velocity, shift_magnitude)
 	
+func dash_input():
+	if Input.is_action_just_pressed("ui_dash"):
+		speed = dash_speed
+		$SpeedReduceTimer.start()
 
 func gui_input():
 	if Input.is_action_just_pressed("ui_action") and has_revive:
@@ -60,21 +69,38 @@ func revive_check():
 		revive_sprite.visible = true
 	else:
 		revive_sprite.visible = false
-		
+	
+func reduce_speed_to_normal(): # Eases to normal speed of player if speed != normal_speed
+	var difference = abs(speed - normal_speed)
+	if difference <= SPEED_DIFF_TOLERANCE:
+		speed = normal_speed
+		return
+	else:
+		var t = ($SpeedReduceTimer.wait_time - $SpeedReduceTimer.time_left) / $SpeedReduceTimer.wait_time
+		var s = ease(t, 1)
+		var new_speed = (difference - (difference * s)) + normal_speed
+		speed = new_speed
+
 func _input(event):
 	if event is InputEventKey:
 		motion_input()
+		dash_input()
 		gui_input()
 
 func _ready():
 	velocity = Vector2(0,0)
-	speed = 400
+	normal_speed = 400
+	dash_speed = 1200
+	speed = normal_speed
+	
 	shift_magnitude = 32
+	$SpeedReduceTimer.set_wait_time(SPEED_REDUCTION_TIME)
 	set_physics_process(true)
 	
 func _physics_process(delta):
 	coughing_check()
 	revive_check()
+	reduce_speed_to_normal()
 	
 	motion_animation()
 	move_and_slide(velocity * speed * scale)
@@ -99,3 +125,7 @@ func _on_DetectionBox_area_exited(area):
 			overlapping_infected = false
 		else:
 			pass
+
+
+func _on_SpeedReduceTimer_timeout():
+	$SpeedReduceTimer.set_wait_time(SPEED_REDUCTION_TIME)

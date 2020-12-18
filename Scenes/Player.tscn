@@ -68,7 +68,7 @@ position = Vector2( 5.53044, 10 )
 scale = Vector2( 0.344928, 0.33913 )
 frames = SubResource( 1 )
 animation = "run"
-frame = 10
+frame = 2
 playing = true
 
 [node name="CollisionBox" type="CollisionShape2D" parent="."]
@@ -89,5 +89,8 @@ modulate = Color( 0.427451, 1, 0.247059, 1 )
 shape = SubResource( 3 )
 
 [node name="Sprite" type="Sprite" parent="DetectionBox"]
+
+[node name="SpeedReduceTimer" type="Timer" parent="."]
 [connection signal="area_entered" from="DetectionBox" to="." method="_on_DetectionBox_area_entered"]
 [connection signal="area_exited" from="DetectionBox" to="." method="_on_DetectionBox_area_exited"]
+[connection signal="timeout" from="SpeedReduceTimer" to="." method="_on_SpeedReduceTimer_timeout"]
