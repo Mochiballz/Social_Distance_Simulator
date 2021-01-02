@@ -1,13 +1,16 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://Resources/Sprites/Temp_Character_Anim.tres" type="SpriteFrames" id=1]
 [ext_resource path="res://Scripts/Infected.gd" type="Script" id=2]
 [ext_resource path="res://Resources/Sprites/temp_danger_zone.png" type="Texture" id=3]
 [ext_resource path="res://Scripts/InfectionRange.gd" type="Script" id=4]
 [ext_resource path="res://Scripts/AvoidanceRay.gd" type="Script" id=5]
+[ext_resource path="res://Scripts/AvoidanceRange.gd" type="Script" id=6]
 
 [sub_resource type="CircleShape2D" id=1]
 radius = 93.0
+
+[sub_resource type="CircleShape2D" id=3]
 
 [sub_resource type="RectangleShape2D" id=2]
 extents = Vector2( 32, 8 )
@@ -37,11 +40,23 @@ texture = ExtResource( 3 )
 [node name="OverlapLines" type="Node2D" parent="InfectionRange"]
 visible = false
 
-[node name="AvoidanceRay" type="RayCast2D" parent="."]
+[node name="AvoidanceRange" type="Area2D" parent="."]
+collision_layer = 2
+collision_mask = 2
+script = ExtResource( 6 )
+
+[node name="AvoidanceRay" type="RayCast2D" parent="AvoidanceRange"]
+enabled = true
+collision_mask = 2
+collide_with_areas = true
+collide_with_bodies = false
 script = ExtResource( 5 )
 
-[node name="DebugLine" type="Line2D" parent="AvoidanceRay"]
+[node name="DebugLine" type="Line2D" parent="AvoidanceRange/AvoidanceRay"]
 width = 4.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AvoidanceRange"]
+shape = SubResource( 3 )
 
 [node name="SpriteGroup" type="Node2D" parent="."]
 
@@ -49,7 +64,6 @@ width = 4.0
 scale = Vector2( 0.4, 0.4 )
 frames = ExtResource( 1 )
 animation = "run"
-frame = 1
 playing = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
@@ -74,6 +88,7 @@ one_shot = true
 [connection signal="area_entered" from="InfectionRange" to="InfectionRange" method="_on_InfectionRange_area_entered"]
 [connection signal="area_exited" from="InfectionRange" to="InfectionRange" method="_on_InfectionRange_area_exited"]
 [connection signal="body_entered" from="InfectionRange" to="InfectionRange" method="_on_InfectionRange_body_entered"]
+[connection signal="area_entered" from="AvoidanceRange" to="AvoidanceRange/AvoidanceRay" method="_on_AvoidanceRange_area_entered"]
 [connection signal="screen_exited" from="VisibilityNotifier2D" to="." method="_on_VisibilityNotifier2D_screen_exited"]
 [connection signal="timeout" from="CoughTimer" to="." method="_on_CoughTimer_timeout"]
 [connection signal="timeout" from="CoughDuration" to="." method="_on_CoughDuration_timeout"]

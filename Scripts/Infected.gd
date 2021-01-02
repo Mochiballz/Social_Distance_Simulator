@@ -8,7 +8,11 @@ export(Vector2) var velocity = Vector2.DOWN
 export(Vector2) var acceleration = Vector2.ZERO
 
 export(float) var speed = 200.0 # Velocity usage only
-export(float) var magnitude = 400.0 # Acceleration usage only, repel function
+export(float) var magnitude = 200.0 # Acceleration usage only, repel function
+
+# FORCES
+export(Vector2) var repel_force = Vector2.ZERO
+export(Vector2) var avoidance_force = Vector2.ZERO
 
 var behavior_function = funcref(self, "default")
 
@@ -94,6 +98,7 @@ func coughing_animation(cough):
 		$InfectionRange/CollisionShape2D/InfectionSprite.modulate = buildup_color
 
 func _ready():
+	
 	$CoughTimer.set_wait_time(cough_wait_time)
 	$CoughDuration.set_wait_time(cough_duration_time)
 	
@@ -106,7 +111,9 @@ func _ready():
 
 
 func _physics_process(delta):
-	var move_vector = (velocity * speed) + acceleration
+	acceleration = (repel_force + avoidance_force).clamped(1.0)
+	var move_vector = (velocity * speed) + (acceleration * magnitude)
+	
 	if velocity == Vector2.ZERO:
 		var map = get_node("/root/World/Map")
 		move_and_slide(map.direction * map.scroll_speed / delta)

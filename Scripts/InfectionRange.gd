@@ -1,7 +1,7 @@
 extends Area2D
 
 var overlapping_infected = false
-var repel_enabled = true
+var repel_enabled = false
 var overlapping_infected_ids = {} # 
 
 # Exerts force on itself from overlapping 'Infected' instances, has 'cushion' 
@@ -23,8 +23,8 @@ func repel_force(enabled):
 		#			if(area_force.length() > max_force_length):
 		#				max_force_length = area_force.length()
 					
-					var mag = get_parent().magnitude * ease(1 - (area_force.length() / distance_max), 6)
-					net_force = net_force + (area_force * mag)
+					var force_percent = ease(1 - (area_force.length() / distance_max), 7)
+					net_force = net_force + (area_force * force_percent)
 					
 				elif area.get_parent() is Player:
 					pass
@@ -36,9 +36,9 @@ func repel_force(enabled):
 		else:
 			net_force = Vector2.ZERO
 	
-		get_parent().acceleration = net_force
+		get_parent().repel_force = net_force
 	else:
-		get_parent().acceleration = Vector2.ZERO
+		get_parent().repel_force = Vector2.ZERO
 
 # Draws line of where the overlap of two infection ranges exist (DEBUG)
 func draw_overlap_line():
