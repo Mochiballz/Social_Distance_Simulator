@@ -90,6 +90,7 @@ func spawn_infected(infected_template):
 	for e in spawn_point.entities:
 		e.speed = infected_template.speed
 		$Entities.add_child(e)
+	
 
 
 func spawn_item(item_template):
@@ -111,7 +112,7 @@ func spawn_item(item_template):
 	for e in spawn_point.entities:
 		e.speed = map_scroll_speed
 		$Entities.add_child(e)
-
+		
 
 func infected_timer_update():
 	var bar = $Interface/InfectedTimerBar
@@ -159,6 +160,10 @@ func _physics_process(delta):
 
 func _on_RoundTimer_timeout():
 	clear_spawn_timers()
+	if round_index == $Timeline.round_queue.size() - 1:
+		for r in $Timeline.round_queue:
+			r.change_difficulty(0.9)
+		
 	round_index = (round_index + 1) % $Timeline.round_queue.size()
 	current_round = $Timeline.round_queue[round_index]
 	current_in = 0
@@ -175,11 +180,9 @@ func _on_SpawnTimer_timeout(template, timer):
 	var is_item = false
 	if template.speed > 0:
 		spawn_infected(template)
-		print("Infected spawned")
 	else:
 		is_item = true
 		spawn_item(template)
-		print("Item spawned")
 	
 	if current_round.ordered > 0:
 		var timers

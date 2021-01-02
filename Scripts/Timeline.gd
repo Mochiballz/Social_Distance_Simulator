@@ -20,6 +20,7 @@ class EntityTemplate:
 	var spawn_delay : float # Wait time before spawning begins
 	
 	var aim_to_player : bool # AtP
+	var seek_to_player : bool
 
 var round_queue : Array = []
 
@@ -39,7 +40,37 @@ class Round:
 	func _init(d : float = 0.0, o : int = 0):
 		duration = d
 		ordered = o
+	
+	func add_entity(json):
+		var template = EntityTemplate.new()
 		
+		template.speed = json["speed"]
+		template.entity_number = json["entity_number"]
+		
+		template.behavior = int(json["behavior_array"][0]["behavior"])
+		template.formation = int(json["formation_array"])
+		
+		template.odds = json["odds"]
+		template.spawners = json["spawners"]
+		
+		template.spawn_rate_start = json["spawner_rate_start"]
+		template.spawn_rate_end = json["spawner_rate_end"]
+		template.spawn_delay = json["spawner_delay"]
+		
+		template.aim_to_player = json["aim_to_player"]
+		template.seek_to_player = json["seek_to_player"]
+		
+		if json["entity_type"] == "infected":
+			in_queue.push_back(template)
+		elif json["entity_type"] == "item":
+			it_queue.push_back(template)
+		else:
+			pass
+			
+	func add_entities(list):
+		for e in list:
+			self.add_entity(e)
+	
 	func add_infected(s : float, n : int, b, f, o : int, sp : Array, st : float, e : float = -1, d : float = 0.0, atp : bool = false):
 		var infected_template = EntityTemplate.new()
 		infected_template.speed = s
@@ -117,6 +148,12 @@ class Round:
 			return select_ordered_infected()
 		else:
 			return select_rand_infected()
+			
+	func change_difficulty(n): # n = the magnitude of difficulty increase (n = 1 does nothing)
+		for i in in_queue:
+			i.spawn_rate_start = i.spawn_rate_start * n
+			i.spawn_rate_end = i.spawn_rate_end * n
+		
 
 func _ready():
 	var spawnpoint_range = range(0, get_node("/root/World/Spawners").get_child_count() - 1)
@@ -127,11 +164,49 @@ func _ready():
 	var round_2 = Round.new(10.0)
 	var round_3 = Round.new()
 	
+	
+	
+	# IMPORT JSON DATA - Infected/Item Types
+	# Infected Default
+	var file_infected_default = File.new()
+	var file_item_revive = File.new()
+	var file_infected_loop_atp = File.new()
+	
+	file_infected_default.open("res://Data/infected_default.json", file_infected_default.READ)
+	file_item_revive.open("res://Data/item_revive.json", file_item_revive.READ)
+	file_infected_loop_atp.open("res://Data/infected_loop_atp.json", file_item_revive.READ)
+	
+	var json_infected_default = file_infected_default.get_as_text()
+	var json_item_revive = file_item_revive.get_as_text()
+	var json_infected_loop_atp = file_infected_loop_atp.get_as_text()
+	
+	var infected_default = parse_json(json_infected_default)
+	var item_revive = parse_json(json_item_revive)
+	var infected_loop_atp = parse_json(json_infected_loop_atp)
+	
+	file_infected_default.close()
+	file_item_revive.close()
+	file_infected_loop_atp.close()
+	
+	# CREATE ROUND ARRAYS
+	# Round 0 (Test)
+	infected_default["spawners"] = reduced_spawnpoints
+	item_revive["spawners"] = spawnpoint_range
+	infected_loop_atp["spawners"] = reduced_spawnpoints
+	
+	var round_0_test = Round.new(12.0)
+	var entity_list_test_0 = [infected_default, item_revive, infected_loop_atp]
+	
+	round_0_test.add_entities(entity_list_test_0)
+	round_queue = [ round_0_test ]
+	
+	
+	
 	# Round 0 + Item
 	var round_0_infected = [
 #        Speed   Number   Behavior               Formation                 Odds   Spawners             Rate Start   Rate End   Delay   AtP
-		[300,    1,       single_state.LINEAR,   group_state.WAVE_RANDOM,  4,     reduced_spawnpoints, 0.2,         0.6,       0.0,    false],
-		[400,    1,       single_state.LINEAR,   group_state.WAVE_STATIC,  4,     reduced_spawnpoints, 1.0,         2.0,       0.0,    true],
+		[300,    1,       single_state.LINEAR,   group_state.WAVE_RANDOM,  4,     reduced_spawnpoints, 0.2,         0.3,       0.0,    false],
+		[400,    1,       single_state.LINEAR,   group_state.WAVE_STATIC,  4,     reduced_spawnpoints, 0.5,         1.0,       0.0,    true],
 	]
 	var item = [
 		[0,      1,       single_state.LINEAR,   group_state.WAVE_STATIC,  1,     spawnpoint_range,    2.0,        2.0]
@@ -146,9 +221,9 @@ func _ready():
 	
 	# Round 1
 	var round_1_infected = [
-		[300,    1,       single_state.LINEAR,   group_state.WAVE_STATIC,  4,     spawnpoint_range,    1.0,         1.0,       0.0,    true],
-		[300,    1,       single_state.CURVE,    group_state.WAVE_STATIC,  3,     spawnpoint_range,    1.0,         1.0,       0.0,    true],
-		[220,    1,       single_state.LOOP,     group_state.WAVE_STATIC,  3,     spawnpoint_range,    1.0,         1.0,       0.0,    false],
+		[300,    1,       single_state.LINEAR,   group_state.WAVE_STATIC,  4,     spawnpoint_range,    0.6,         1.0,       0.0,    false],
+		[300,    1,       single_state.CURVE,    group_state.WAVE_STATIC,  3,     spawnpoint_range,    1.0,         3.0,       0.0,    true],
+		[220,    1,       single_state.LOOP,     group_state.WAVE_RANDOM,  3,     spawnpoint_range,    1.0,         1.0,       0.0,    false],
 #		[220,    3,       single_state.LINEAR,   group_state.WAVE_DIVERGE, 2,     spawnpoint_range,    1.0,         1.0,       0.0,    true]
 	]
 	
@@ -157,13 +232,13 @@ func _ready():
 		[220,    5,       single_state.SINUSOID, group_state.WAVE_DIVERGE, 1,     spawnpoint_range,    4.0,         4.0,       0.0,    false]
 	]
 	
-	round_queue = [ round_0, round_1, round_2 ]
+#	round_queue = [ round_0, round_1, round_2 ]
 	var round_infected = [ round_0_infected, round_1_infected, round_2_infected ]
 	var round_item = [ item, item, item ]
 	
-	for i in range(round_queue.size()):
-		for j in round_infected[i]:
-			round_queue[i].add_infected(j[0], j[1], j[2], j[3], j[4], j[5], j[6], j[7], j[8], j[9])
-		for k in round_item[i]:
-			round_queue[i].add_item(k[0], k[1], k[2], k[3], k[4], k[5], k[6], k[7])
+#	for i in range(round_queue.size()):
+#		for j in round_infected[i]:
+#			round_queue[i].add_infected(j[0], j[1], j[2], j[3], j[4], j[5], j[6], j[7], j[8], j[9])
+#		for k in round_item[i]:
+#			round_queue[i].add_item(k[0], k[1], k[2], k[3], k[4], k[5], k[6], k[7])
 	

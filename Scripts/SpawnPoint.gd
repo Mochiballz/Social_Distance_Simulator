@@ -6,9 +6,9 @@ enum group_state {WAVE_STATIC, WAVE_DIVERGE, WAVE_CONVERGE, WAVE_RANDOM, BLAST_U
 # ENTITY/SPAWN POINT VARIABLES
 # New instances will be made each "spawn()" call
 export var entities = []
-export(int) var entity_number = 1
-export(single_state) var entity_behavior = single_state.CURVE
-export(group_state) var formation = group_state.WAVE_STATIC
+export(int) var entity_number
+export(single_state) var entity_behavior
+export(group_state) var formation
 
 export(float) var angle # The angle at which the wave/blast is facing
 var angle_vector
@@ -53,6 +53,7 @@ func _ready():
 	
 	blast_arc = PI / 3
 	blast_layers = 1
+
 	
 func load_template(temp):
 	entity_behavior = temp.behavior
@@ -74,7 +75,7 @@ func spawn(entity_type):
 	else:
 		angle_vector = polar2cartesian(1, -angle)
 		direction = angle_vector
-		
+	
 	match formation:
 		group_state.WAVE_STATIC:
 			entities = create_wave_static(entity_type)
@@ -89,7 +90,10 @@ func spawn(entity_type):
 		group_state.BLAST_RANDOM:
 			entities = create_blast_random(entity_type)
 		_:
+			print("No enumeration found")
 			pass
+			
+	
 
 func wave_alignment(i): # Creates the entity offset for wave formations
 	var alignment

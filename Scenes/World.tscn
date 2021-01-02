@@ -228,7 +228,6 @@ script = ExtResource( 6 )
 [node name="InfectedTimers" type="Node" parent="SpawnTimers"]
 
 [node name="ItemTimers" type="Node" parent="SpawnTimers"]
-[connection signal="velocity_change" from="Entities/Player" to="Interface/InterfaceCamera" method="_on_Player_velocity_change"]
 [connection signal="velocity_change" from="Entities/Player" to="Interface" method="_on_Player_velocity_change"]
 [connection signal="pressed" from="Interface/GameOver/VBoxContainer/Buttons/Retry" to="." method="_on_Retry_pressed"]
 [connection signal="pressed" from="Interface/GameOver/VBoxContainer/Buttons/Quit" to="." method="_on_Quit_pressed"]

@@ -16,8 +16,8 @@ var behavior_function = funcref(self, "default")
 
 # COUGH VARIABLES
 var coughing = false
-export(float) var cough_wait_time = 0.75
-export(float) var cough_duration_time = 0.15
+export(float) var cough_wait_time = 1.0
+export(float) var cough_duration_time = 0.05
 
 # BEHAVIOR VARIABLES
 var behavior_active = false

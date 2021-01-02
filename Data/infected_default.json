@@ -1,0 +1,20 @@
+{
+	"entity_type": "infected",
+	"entity_number": 1,
+	"speed": 300,
+	
+	"behavior_array": [ 
+		{"behavior" : 0, "duration" : -1} 
+	], 
+	"formation_array": 3,
+	
+	"odds": 1,
+	"spawners": [],
+	"spawner_rate_start": 0.5,
+	"spawner_rate_end": 0.5,
+	"spawner_delay": 0,
+	
+	"aim_to_player": false,
+	"seek_to_player": false
+
+}
