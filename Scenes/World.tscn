@@ -47,34 +47,34 @@ script = ExtResource( 8 )
 position = Vector2( -192, 0 )
 
 [node name="Spawners" type="Node2D" parent="."]
-position = Vector2( 128, 0 )
+position = Vector2( 320, -1 )
 __meta__ = {
 "_edit_group_": true
 }
 
 [node name="SpawnPoint" parent="Spawners" instance=ExtResource( 5 )]
-position = Vector2( 0, -129 )
+position = Vector2( 64, -129 )
 
 [node name="SpawnPoint2" parent="Spawners" instance=ExtResource( 5 )]
 position = Vector2( 192, -129 )
 
 [node name="SpawnPoint3" parent="Spawners" instance=ExtResource( 5 )]
-position = Vector2( 384, -129 )
+position = Vector2( 320, -129 )
 
 [node name="SpawnPoint4" parent="Spawners" instance=ExtResource( 5 )]
-position = Vector2( 576, -129 )
+position = Vector2( 448, -129 )
 
 [node name="SpawnPoint5" parent="Spawners" instance=ExtResource( 5 )]
-position = Vector2( 768, -129 )
+position = Vector2( 576, -129 )
 
 [node name="SpawnPoint6" parent="Spawners" instance=ExtResource( 5 )]
-position = Vector2( 960, -129 )
+position = Vector2( 704, -129 )
 
 [node name="SpawnPoint7" parent="Spawners" instance=ExtResource( 5 )]
-position = Vector2( 1152, -129 )
+position = Vector2( 832, -129 )
 
 [node name="SpawnPoint8" parent="Spawners" instance=ExtResource( 5 )]
-position = Vector2( 1344, -129 )
+position = Vector2( 960, -129 )
 
 [node name="Entities" type="YSort" parent="."]
 

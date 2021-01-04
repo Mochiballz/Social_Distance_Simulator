@@ -162,7 +162,7 @@ func _on_RoundTimer_timeout():
 	clear_spawn_timers()
 	if round_index == $Timeline.round_queue.size() - 1:
 		for r in $Timeline.round_queue:
-			r.change_difficulty(0.9)
+			r.change_difficulty(1)
 		
 	round_index = (round_index + 1) % $Timeline.round_queue.size()
 	current_round = $Timeline.round_queue[round_index]

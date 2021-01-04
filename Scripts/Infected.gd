@@ -116,7 +116,8 @@ func _physics_process(delta):
 	
 	if velocity == Vector2.ZERO:
 		var map = get_node("/root/World/Map")
-		move_and_slide(map.direction * map.scroll_speed / delta)
+		var map_direction = polar2cartesian(1, -map.direction)
+		move_and_slide(map_direction * map.scroll_speed / delta)
 	else:
 		move_and_slide(move_vector * scale)
 	

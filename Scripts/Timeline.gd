@@ -195,7 +195,7 @@ func _ready():
 	infected_loop_atp["spawners"] = reduced_spawnpoints
 	
 	var round_0_test = Round.new(12.0)
-	var entity_list_test_0 = [infected_default, item_revive, infected_loop_atp]
+	var entity_list_test_0 = [infected_default, item_revive]
 	
 	round_0_test.add_entities(entity_list_test_0)
 	round_queue = [ round_0_test ]
