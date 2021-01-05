@@ -2,6 +2,7 @@ extends KinematicBody2D
 
 class_name Infected
 
+enum single_state {LINEAR, CURVE, LOOP, STOP, SINUSOID}
 var distance = 0.0 # Measurement of distance traveled
 
 export(Vector2) var velocity = Vector2.DOWN
@@ -14,6 +15,7 @@ export(float) var magnitude = 200.0 # Acceleration usage only, repel function
 export(Vector2) var repel_force = Vector2.ZERO
 export(Vector2) var avoidance_force = Vector2.ZERO
 
+var behavior_array
 var behavior_function = funcref(self, "default")
 
 # NOTE: Overall "movement speed" MUST remain under speed variable
@@ -24,11 +26,13 @@ export(float) var cough_wait_time = 1.0
 export(float) var cough_duration_time = 0.05
 
 # BEHAVIOR VARIABLES
+var behavior_index = 0
 var behavior_active = false
-var behavior_delay = 2
+var behavior_delay = 1
 var behavior_time = 3 # In seconds
 
 var seek_player = false
+var curve_direction = Vector2.LEFT
 
 var old_velocity
 var new_velocity
@@ -71,6 +75,25 @@ func set_sinusoid(t): # SINUSOID
 		var sine_vector = old_velocity.tangent() * amplitude
 		velocity = old_velocity + sine_vector
 
+# BEHAVIOR ITERATION: Function that switches to the next behavior in behavior array
+func set_behavior():
+	behavior_time = behavior_array[behavior_index]["duration"]
+	match int(behavior_array[behavior_index]["behavior"]):
+		single_state.LINEAR:
+			pass
+		single_state.CURVE:
+			new_velocity = curve_direction
+			behavior_function = funcref(self, "set_curve")
+		single_state.LOOP:
+			behavior_function = funcref(self, "set_loop")
+		single_state.STOP:
+			behavior_function = funcref(self, "set_stop")
+		single_state.SINUSOID:
+			behavior_function = funcref(self, "set_sinusoid")
+		_:
+			pass
+	behavior_index += 1
+
 func motion_animation():
 	if velocity != Vector2.ZERO:
 		$SpriteGroup/AnimatedSprite.play("run")
@@ -98,6 +121,9 @@ func coughing_animation(cough):
 		$InfectionRange/CollisionShape2D/InfectionSprite.modulate = buildup_color
 
 func _ready():
+	old_velocity = velocity
+	old_speed = speed
+	set_behavior()
 	
 	$CoughTimer.set_wait_time(cough_wait_time)
 	$CoughDuration.set_wait_time(cough_duration_time)
@@ -107,6 +133,7 @@ func _ready():
 	
 	$CoughTimer.start()
 	$BehaviorTimer.start()
+	
 	set_physics_process(true)
 
 
@@ -145,7 +172,12 @@ func _on_BehaviorTimer_timeout():
 	$BehaviorDuration.start()
 
 func _on_BehaviorDuration_timeout():
-	behavior_active = false
+	if behavior_index < behavior_array.size():
+		set_behavior()
+		$BehaviorDuration.set_wait_time(behavior_time)
+		$BehaviorDuration.start()
+	else:
+		behavior_active = false
 
 
 

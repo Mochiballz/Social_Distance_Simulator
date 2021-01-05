@@ -7,8 +7,10 @@ export(item_type) var type
 export(Vector2) var velocity = Vector2.DOWN
 export(float) var speed = 1.0
 
+var behavior_array
 var old_velocity
 var old_speed
+
 func _ready():
 	pass
 

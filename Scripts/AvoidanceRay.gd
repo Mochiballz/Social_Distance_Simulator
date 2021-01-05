@@ -15,7 +15,7 @@ func avoidance_force(enabled):
 		force = force.normalized()
 		
 		var overlap_length = (ahead - get_collision_point()).length()
-		var force_ease = ease(overlap_length / cast_to.length(), 6)
+		var force_ease = ease(overlap_length / cast_to.length(), -5)
 		
 		get_parent().infected_reference.avoidance_force = force * force_ease
 	else:
@@ -27,7 +27,7 @@ func _ready():
 	
 func _physics_process(delta):
 	cast_to = get_parent().infected_reference.velocity * get_parent().radius * 1.75
-	avoidance_force(avoidance_enabled)
+#	avoidance_force(avoidance_enabled)
 	
 	$DebugLines/Avoidance.clear_points()
 	$DebugLines/Avoidance.add_point(Vector2.ZERO)

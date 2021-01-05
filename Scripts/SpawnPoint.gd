@@ -7,7 +7,7 @@ enum group_state {WAVE_STATIC, WAVE_DIVERGE, WAVE_CONVERGE, WAVE_RANDOM, BLAST_U
 # New instances will be made each "spawn()" call
 export var entities = []
 export(int) var entity_number
-export(single_state) var entity_behavior
+export(Array) var entity_behavior
 export(group_state) var formation
 
 export(float) var angle # The angle at which the wave/blast is facing
@@ -20,7 +20,6 @@ export(bool) var aim_to_player = false # If true, spawn point will aim entities 
 # FORMATION VARIABLES
 export(float) var spacing
 export(int) var gap_position # If no gap desired, set to -1
-export(Vector2) var curve_direction
 
 # Wave Ray Variables
 export(float) var diverge_speed
@@ -44,12 +43,11 @@ func _ready():
 	offset = Vector2.ZERO
 	
 	gap_position = -1
-	curve_direction = Vector2.LEFT
 	
 	diverge_speed = 0.2
 	converge_speed = -0.2
 	
-	random_speed_bound = 0.2
+	random_speed_bound = 0.05
 	
 	blast_arc = PI / 3
 	blast_layers = 1
@@ -135,8 +133,7 @@ func create_wave_static(entity_type) -> Array:
 		
 		entity.position = global_position + entity_alignment
 		entity.velocity = direction
-		set_entitiy_behavior(entity)
-		
+		entity.behavior_array = entity_behavior
 		entity_group.push_back(entity)
 		
 	return entity_group
@@ -157,7 +154,7 @@ func create_wave_ray(entity_type, speed) -> Array:
 		
 		entity.position = global_position + entity_alignment
 		entity.velocity = direction + ray_vector
-		set_entitiy_behavior(entity)
+		entity.behavior_array = entity_behavior
 		
 		entity_group.push_back(entity)
 		
@@ -178,7 +175,7 @@ func create_wave_random(entity_type) -> Array:
 		
 		entity.position = global_position + entity_alignment
 		entity.velocity = (direction + random_vector).clamped(1.0)
-		set_entitiy_behavior(entity)
+		entity.behavior_array = entity_behavior
 		
 		entity_group.push_back(entity)
 	
@@ -200,7 +197,7 @@ func create_blast_uniform(entity_type) -> Array:
 			
 			entity.position = global_position + entity_alignment
 			entity.velocity = direction.rotated(blast_angle)
-			set_entitiy_behavior(entity)
+			entity.behavior_array = entity_behavior
 			
 			entity_group.push_back(entity)
 		
@@ -225,7 +222,7 @@ func create_blast_random(entity_type) -> Array:
 			
 			entity.position = global_position + entity_alignment
 			entity.velocity = direction.rotated(random_angle)
-			set_entitiy_behavior(entity)
+			entity.behavior_array = entity_behavior
 			
 			entity_group.push_back(entity)
 			
@@ -233,23 +230,5 @@ func create_blast_random(entity_type) -> Array:
 		
 	return entity_group
 	
-	
-func set_entitiy_behavior(e):
-	e.old_velocity = e.velocity
-	e.old_speed = e.speed
-	match entity_behavior:
-		single_state.LINEAR:
-			pass
-		single_state.CURVE:
-			e.new_velocity = curve_direction
-			e.behavior_function = funcref(e, "set_curve")
-		single_state.LOOP:
-			e.behavior_function = funcref(e, "set_loop")
-		single_state.STOP:
-			e.behavior_function = funcref(e, "set_stop")
-		single_state.SINUSOID:
-			e.behavior_function = funcref(e, "set_sinusoid")
-		_:
-			pass
 
 

@@ -47,7 +47,7 @@ class Round:
 		template.speed = json["speed"]
 		template.entity_number = json["entity_number"]
 		
-		template.behavior = int(json["behavior_array"][0]["behavior"])
+		template.behavior = json["behavior_array"]
 		template.formation = int(json["formation_array"])
 		
 		template.odds = json["odds"]
@@ -126,31 +126,40 @@ class Round:
 		
 
 func _ready():
-	var spawnpoint_range = range(0, get_node("/root/World/Spawners").get_child_count() - 1)
-	var reduced_spawnpoints = spawnpoint_range.slice(spawnpoint_range[1], spawnpoint_range[spawnpoint_range.size() - 1])
+	var spawnpoints_range = range(0, get_node("/root/World/Spawners").get_child_count() - 1)
+	var spawnpoints_size = spawnpoints_range.size()
 	
-	var round_0 = Round.new(80.0)
-	var round_1 = Round.new(30.0, 1)
+	var spawnpoints_left = spawnpoints_range.slice(0, (spawnpoints_size / 2))
+	var spawnpoints_right = spawnpoints_range.slice((spawnpoints_size / 2), spawnpoints_size - 1)
+	var spawnpoints_ends = [0, spawnpoints_size - 1]
+	var spawnpoints_no_ends = spawnpoints_range.slice(1, spawnpoints_range.size() - 2)
+	
+	var round_0 = Round.new(10.0, 1)
+	var round_1 = Round.new(30.0)
 	var round_2 = Round.new(10.0)
 	var round_3 = Round.new()
-	
-	
 	
 	# IMPORT JSON DATA - Infected/Item Types
 	# Infected Default
 	var file_infected_default = File.new()
+	var file_infected_karen = File.new()
 	var file_item_revive = File.new()
 	var file_infected_loop_atp = File.new()
 	
 	file_infected_default.open("res://Data/infected_default.json", file_infected_default.READ)
+	file_infected_karen.open("res://Data/infected_karen.json", file_infected_karen.READ)
 	file_item_revive.open("res://Data/item_revive.json", file_item_revive.READ)
 	file_infected_loop_atp.open("res://Data/infected_loop_atp.json", file_item_revive.READ)
 	
 	var json_infected_default = file_infected_default.get_as_text()
+	var json_infected_karen = file_infected_karen.get_as_text()
 	var json_item_revive = file_item_revive.get_as_text()
 	var json_infected_loop_atp = file_infected_loop_atp.get_as_text()
 	
 	var infected_default = parse_json(json_infected_default)
+	var infected_karen = parse_json(json_infected_karen)
+	var other_default = parse_json(json_infected_default)
+	
 	var item_revive = parse_json(json_item_revive)
 	var infected_loop_atp = parse_json(json_infected_loop_atp)
 	
@@ -160,13 +169,22 @@ func _ready():
 	
 	# CREATE ROUND ARRAYS
 	# Round 0 (Test)
-	infected_default["spawners"] = reduced_spawnpoints
-	item_revive["spawners"] = spawnpoint_range
-	infected_loop_atp["spawners"] = reduced_spawnpoints
+	infected_default["spawners"] = spawnpoints_left
+	infected_karen["spawners"] = spawnpoints_range
+	other_default["spawners"] = spawnpoints_right
 	
-	var round_0_test = Round.new(12.0)
-	var entity_list_test_0 = [infected_default, item_revive]
-	
-	round_0_test.add_entities(entity_list_test_0)
-	round_queue = [ round_0_test ]
+	item_revive["spawners"] = spawnpoints_range
+	infected_loop_atp["spawners"] = spawnpoints_no_ends
+
+	var entity_list_0 = []
+	var entity_list_1 = [infected_karen, item_revive]
+	for i in range(20):
+		entity_list_0.push_back(infected_default)
+	for i in range(20):
+		entity_list_0.push_back(other_default)
+	entity_list_0.push_back(item_revive)
+
+	round_0.add_entities(entity_list_0)
+	round_1.add_entities(entity_list_1)
+	round_queue = [ round_1 ]
 

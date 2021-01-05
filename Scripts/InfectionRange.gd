@@ -1,7 +1,7 @@
 extends Area2D
 
 var overlapping_infected = false
-var repel_enabled = true
+var repel_enabled = false
 var overlapping_infected_ids = {} # 
 
 # Exerts force on itself from overlapping 'Infected' instances, has 'cushion' 
