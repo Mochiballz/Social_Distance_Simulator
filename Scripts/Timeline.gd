@@ -70,36 +70,6 @@ class Round:
 	func add_entities(list):
 		for e in list:
 			self.add_entity(e)
-	
-	func add_infected(s : float, n : int, b, f, o : int, sp : Array, st : float, e : float = -1, d : float = 0.0, atp : bool = false):
-		var infected_template = EntityTemplate.new()
-		infected_template.speed = s
-		infected_template.entity_number = n
-		infected_template.behavior = b
-		infected_template.formation = f
-		infected_template.odds = o
-		infected_template.spawners = sp
-		infected_template.spawn_rate_start = st
-		infected_template.spawn_rate_end = st if e == -1 else e
-		infected_template.spawn_delay = d
-		infected_template.aim_to_player = atp
-		
-		in_queue.push_back(infected_template)
-		
-	func add_item(s : float, n : int, b, f, o : int, sp : Array, st: float, e : float = -1, d : float = 0.0, atp : bool = false):
-		var item_template = EntityTemplate.new()
-		item_template.speed = s
-		item_template.entity_number = n
-		item_template.behavior = b
-		item_template.formation = f
-		item_template.odds = o
-		item_template.spawners = sp
-		item_template.spawn_rate_start = st
-		item_template.spawn_rate_end = st if e == -1 else e
-		item_template.spawn_delay = d
-		item_template.aim_to_player = atp
-		
-		it_queue.push_back(item_template)
 		
 	func infected_odds_total():
 		var odds_total = 0
@@ -199,46 +169,4 @@ func _ready():
 	
 	round_0_test.add_entities(entity_list_test_0)
 	round_queue = [ round_0_test ]
-	
-	
-	
-	# Round 0 + Item
-	var round_0_infected = [
-#        Speed   Number   Behavior               Formation                 Odds   Spawners             Rate Start   Rate End   Delay   AtP
-		[300,    1,       single_state.LINEAR,   group_state.WAVE_RANDOM,  4,     reduced_spawnpoints, 0.2,         0.3,       0.0,    false],
-		[400,    1,       single_state.LINEAR,   group_state.WAVE_STATIC,  4,     reduced_spawnpoints, 0.5,         1.0,       0.0,    true],
-	]
-	var item = [
-		[0,      1,       single_state.LINEAR,   group_state.WAVE_STATIC,  1,     spawnpoint_range,    2.0,        2.0]
-		
-	]
-	
-	var items = [
-		[0,      1,       single_state.LINEAR,   group_state.WAVE_STATIC,  1,     spawnpoint_range,    2.0,        2.0],
-		[0,      1,       single_state.LINEAR,   group_state.WAVE_STATIC,  1,     spawnpoint_range,    5.0,        5.0]
-		
-	]
-	
-	# Round 1
-	var round_1_infected = [
-		[300,    1,       single_state.LINEAR,   group_state.WAVE_STATIC,  4,     spawnpoint_range,    0.6,         1.0,       0.0,    false],
-		[300,    1,       single_state.CURVE,    group_state.WAVE_STATIC,  3,     spawnpoint_range,    1.0,         3.0,       0.0,    true],
-		[220,    1,       single_state.LOOP,     group_state.WAVE_RANDOM,  3,     spawnpoint_range,    1.0,         1.0,       0.0,    false],
-#		[220,    3,       single_state.LINEAR,   group_state.WAVE_DIVERGE, 2,     spawnpoint_range,    1.0,         1.0,       0.0,    true]
-	]
-	
-	# Round 2
-	var round_2_infected = [
-		[220,    5,       single_state.SINUSOID, group_state.WAVE_DIVERGE, 1,     spawnpoint_range,    4.0,         4.0,       0.0,    false]
-	]
-	
-#	round_queue = [ round_0, round_1, round_2 ]
-	var round_infected = [ round_0_infected, round_1_infected, round_2_infected ]
-	var round_item = [ item, item, item ]
-	
-#	for i in range(round_queue.size()):
-#		for j in round_infected[i]:
-#			round_queue[i].add_infected(j[0], j[1], j[2], j[3], j[4], j[5], j[6], j[7], j[8], j[9])
-#		for k in round_item[i]:
-#			round_queue[i].add_item(k[0], k[1], k[2], k[3], k[4], k[5], k[6], k[7])
-	
+
