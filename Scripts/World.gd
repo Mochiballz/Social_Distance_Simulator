@@ -89,6 +89,7 @@ func spawn_infected(infected_template):
 	
 	for e in spawn_point.entities:
 		e.speed = infected_template.speed
+		e.seek_player = infected_template.seek_to_player
 		$Entities.add_child(e)
 	
 
@@ -112,6 +113,21 @@ func spawn_item(item_template):
 	for e in spawn_point.entities:
 		e.speed = map_scroll_speed
 		$Entities.add_child(e)
+
+# Spawns infected before timers start, chooses infected w/ the shortest spawn_rate_start
+# if the current round is NOT ordered. Spawns first infected in queue otherwise
+func init_spawn():
+	if current_round.ordered == 0:
+		var first_infected = current_round.in_queue[0] 
+		var spawntime_min = first_infected.spawn_rate_start
+		for i in current_round.in_queue:
+			if i.spawn_rate_start < spawntime_min:
+				first_infected = i
+				spawntime_min = i.spaw_rate_start
+		spawn_infected(first_infected)
+	else:
+		spawn_infected(current_round.in_queue[current_in])
+		current_in = (current_in + 1) % current_round.in_queue.size() 
 		
 
 func infected_timer_update():
@@ -142,6 +158,7 @@ func _ready():
 	
 	$RoundTimer.set_wait_time(current_round.duration)
 	$RoundTimer.connect("timeout", self, "_on_RoundTimer_timeout")
+	init_spawn()
 	create_spawn_timers()
 	
 	$RoundTimer.start()
