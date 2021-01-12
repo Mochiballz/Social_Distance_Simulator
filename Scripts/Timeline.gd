@@ -131,12 +131,13 @@ func _ready():
 	
 	var spawnpoints_left = spawnpoints_range.slice(0, (spawnpoints_size / 2))
 	var spawnpoints_right = spawnpoints_range.slice((spawnpoints_size / 2), spawnpoints_size - 1)
-	var spawnpoints_ends = [0, spawnpoints_size - 1]
+	var spawnpoints_ends = [0, 1, spawnpoints_size - 2, spawnpoints_size - 1]
 	var spawnpoints_no_ends = spawnpoints_range.slice(1, spawnpoints_range.size() - 2)
+	var spawnpoints_center = [spawnpoints_size / 2]
 	
-	var round_0 = Round.new(10.0, 1)
+	var round_0 = Round.new(60.0)
 	var round_1 = Round.new(30.0)
-	var round_2 = Round.new(10.0)
+	var round_2 = Round.new(80.0, 1)
 	var round_3 = Round.new()
 	
 	# IMPORT JSON DATA - Infected/Item Types
@@ -158,33 +159,26 @@ func _ready():
 	
 	var infected_default = parse_json(json_infected_default)
 	var infected_karen = parse_json(json_infected_karen)
-	var other_default = parse_json(json_infected_default)
-	
 	var item_revive = parse_json(json_item_revive)
 	var infected_loop_atp = parse_json(json_infected_loop_atp)
 	
 	file_infected_default.close()
+	file_infected_karen.close()
 	file_item_revive.close()
 	file_infected_loop_atp.close()
 	
 	# CREATE ROUND ARRAYS
-	# Round 0 (Test)
-	infected_default["spawners"] = spawnpoints_left
-	infected_karen["spawners"] = spawnpoints_range
-	other_default["spawners"] = spawnpoints_right
 	
+	# Modify template variables
+	
+	# Set spawnpoints
+	infected_default["spawners"] = spawnpoints_range
+	infected_karen["spawners"] = spawnpoints_range
 	item_revive["spawners"] = spawnpoints_range
 	infected_loop_atp["spawners"] = spawnpoints_no_ends
 
-	var entity_list_0 = []
-	var entity_list_1 = [infected_karen, item_revive]
-	for i in range(20):
-		entity_list_0.push_back(infected_default)
-	for i in range(20):
-		entity_list_0.push_back(other_default)
-	entity_list_0.push_back(item_revive)
+	var entity_list_0 = [infected_karen, item_revive]
 
 	round_0.add_entities(entity_list_0)
-	round_1.add_entities(entity_list_1)
-	round_queue = [ round_1 ]
+	round_queue = [ round_0 ]
 

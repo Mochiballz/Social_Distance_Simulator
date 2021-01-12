@@ -46,7 +46,7 @@ visible = false
 scale = Vector2( 0.4, 0.4 )
 frames = ExtResource( 1 )
 animation = "run"
-frame = 3
+frame = 2
 playing = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
@@ -66,6 +66,7 @@ collide_with_bodies = false
 script = ExtResource( 5 )
 
 [node name="DebugLines" type="Node2D" parent="AvoidanceRange/AvoidanceRay"]
+visible = false
 
 [node name="Avoidance" type="Line2D" parent="AvoidanceRange/AvoidanceRay/DebugLines"]
 width = 4.0
@@ -89,9 +90,6 @@ rect = Rect2( -10, -14, 20, 29 )
 
 [node name="CoughDuration" type="Timer" parent="."]
 
-[node name="BehaviorTimer" type="Timer" parent="."]
-one_shot = true
-
 [node name="BehaviorDuration" type="Timer" parent="."]
 one_shot = true
 [connection signal="area_entered" from="InfectionRange" to="InfectionRange" method="_on_InfectionRange_area_entered"]
@@ -101,5 +99,4 @@ one_shot = true
 [connection signal="screen_exited" from="VisibilityNotifier2D" to="." method="_on_VisibilityNotifier2D_screen_exited"]
 [connection signal="timeout" from="CoughTimer" to="." method="_on_CoughTimer_timeout"]
 [connection signal="timeout" from="CoughDuration" to="." method="_on_CoughDuration_timeout"]
-[connection signal="timeout" from="BehaviorTimer" to="." method="_on_BehaviorTimer_timeout"]
 [connection signal="timeout" from="BehaviorDuration" to="." method="_on_BehaviorDuration_timeout"]

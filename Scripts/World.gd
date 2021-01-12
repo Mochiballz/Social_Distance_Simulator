@@ -187,6 +187,7 @@ func _on_RoundTimer_timeout():
 	current_it = 0
 	
 	$RoundTimer.set_wait_time(current_round.duration)
+	init_spawn()
 	create_spawn_timers()
 	
 	$RoundTimer.start()

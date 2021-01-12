@@ -47,9 +47,9 @@ func _ready():
 	diverge_speed = 0.2
 	converge_speed = -0.2
 	
-	random_speed_bound = 0.05
+	random_speed_bound = 0.1
 	
-	blast_arc = PI / 3
+	blast_arc = PI / 4
 	blast_layers = 1
 
 	

@@ -27,8 +27,8 @@ export(float) var cough_duration_time = 0.05
 
 # BEHAVIOR VARIABLES
 var behavior_index = 0
-var behavior_active = false
-var behavior_delay = 1
+var behavior_active = true
+var behavior_delay = 0
 var behavior_time = 3 # In seconds
 
 var seek_player = false
@@ -45,10 +45,12 @@ func default(t): # LINEAR
 func set_curve(t): # CURVE
 	if behavior_active:
 		if seek_player:
-			new_velocity = global_position.direction_to(get_node("/root/World/Entities/Player").global_position)
 			if global_position.distance_to(get_node("/root/World/Entities/Player").global_position) < $InfectionRange/CollisionShape2D.shape.radius:
-				return
-		
+				velocity = Vector2.ZERO
+			else:
+				velocity = global_position.direction_to(get_node("/root/World/Entities/Player").global_position)
+			return
+			
 		var p0 = Vector2.ZERO
 		var p1 = old_velocity
 		var p2 = old_velocity + new_velocity
@@ -92,6 +94,9 @@ func set_behavior():
 			behavior_function = funcref(self, "set_sinusoid")
 		_:
 			pass
+	if "direction" in behavior_array[behavior_index]:
+		velocity = Vector2(behavior_array[behavior_index]["direction"]["x"], 
+						   behavior_array[behavior_index]["direction"]["y"])
 	behavior_index += 1
 
 func motion_animation():
@@ -127,12 +132,10 @@ func _ready():
 	
 	$CoughTimer.set_wait_time(cough_wait_time)
 	$CoughDuration.set_wait_time(cough_duration_time)
-	
-	$BehaviorTimer.set_wait_time(behavior_delay)
 	$BehaviorDuration.set_wait_time(behavior_time)
 	
 	$CoughTimer.start()
-	$BehaviorTimer.start()
+	$BehaviorDuration.start()
 	
 	set_physics_process(true)
 
@@ -166,10 +169,6 @@ func _on_CoughTimer_timeout():
 
 func _on_CoughDuration_timeout():
 	coughing = false
-
-func _on_BehaviorTimer_timeout():
-	behavior_active = true
-	$BehaviorDuration.start()
 
 func _on_BehaviorDuration_timeout():
 	if behavior_index < behavior_array.size():
