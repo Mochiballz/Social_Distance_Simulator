@@ -46,7 +46,7 @@ visible = false
 scale = Vector2( 0.4, 0.4 )
 frames = ExtResource( 1 )
 animation = "run"
-frame = 2
+frame = 4
 playing = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

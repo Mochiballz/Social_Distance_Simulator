@@ -125,7 +125,15 @@ class Round:
 			i.spawn_rate_end = i.spawn_rate_end * n
 		
 
+func parse_template(filename):
+	var file = File.new()
+	file.open(filename, file.READ)
+	var json_text = file.get_as_text()
+	file.close()
+	return parse_json(json_text)
+
 func _ready():
+	# Spawnpoint Ranges
 	var spawnpoints_range = range(0, get_node("/root/World/Spawners").get_child_count() - 1)
 	var spawnpoints_size = spawnpoints_range.size()
 	
@@ -139,44 +147,33 @@ func _ready():
 	var round_1 = Round.new(30.0)
 	var round_2 = Round.new(80.0, 1)
 	var round_3 = Round.new()
+	var round_4 = Round.new()
 	
 	# IMPORT JSON DATA - Infected/Item Types
-	# Infected Default
-	var file_infected_default = File.new()
-	var file_infected_karen = File.new()
-	var file_item_revive = File.new()
-	var file_infected_loop_atp = File.new()
+	# Parse .json files to dictionaries
+	var infected_default = parse_template("res://Data/infected_default.json")
+	var infected_pair = parse_template("res://Data/infected_default.json")
+	var infected_curve = parse_template("res://Data/infected_default.json")
+	var infected_stop = parse_template("res://Data/infected_default.json")
+	var infected_karen = parse_template("res://Data/infected_karen.json")
+	var item_revive = parse_template("res://Data/item_revive.json")
 	
-	file_infected_default.open("res://Data/infected_default.json", file_infected_default.READ)
-	file_infected_karen.open("res://Data/infected_karen.json", file_infected_karen.READ)
-	file_item_revive.open("res://Data/item_revive.json", file_item_revive.READ)
-	file_infected_loop_atp.open("res://Data/infected_loop_atp.json", file_item_revive.READ)
+	# Modify variables
+	# Pair
+	infected_pair["entity_number"] = 2
+	infected_pair["spawner_rate_start"] = 2.0
+	infected_pair["spawner_rate_end"] = 2.5
 	
-	var json_infected_default = file_infected_default.get_as_text()
-	var json_infected_karen = file_infected_karen.get_as_text()
-	var json_item_revive = file_item_revive.get_as_text()
-	var json_infected_loop_atp = file_infected_loop_atp.get_as_text()
-	
-	var infected_default = parse_json(json_infected_default)
-	var infected_karen = parse_json(json_infected_karen)
-	var item_revive = parse_json(json_item_revive)
-	var infected_loop_atp = parse_json(json_infected_loop_atp)
-	
-	file_infected_default.close()
-	file_infected_karen.close()
-	file_item_revive.close()
-	file_infected_loop_atp.close()
-	
-	# CREATE ROUND ARRAYS
-	
-	# Modify template variables
+	# Curve
+	infected_curve["behavior_array"][0]["behavior"] = 1
+	infected_curve["behavior_array"][0]["direction"] = -1
 	
 	# Set spawnpoints
 	infected_default["spawners"] = spawnpoints_range
 	infected_karen["spawners"] = spawnpoints_range
 	item_revive["spawners"] = spawnpoints_range
-	infected_loop_atp["spawners"] = spawnpoints_no_ends
-
+	
+	# CREATE ROUND ARRAYS
 	var entity_list_0 = [infected_karen, item_revive]
 
 	round_0.add_entities(entity_list_0)

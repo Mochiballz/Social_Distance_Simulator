@@ -32,7 +32,6 @@ var behavior_delay = 0
 var behavior_time = 3 # In seconds
 
 var seek_player = false
-var curve_direction = Vector2.LEFT
 
 var old_velocity
 var new_velocity
@@ -80,11 +79,17 @@ func set_sinusoid(t): # SINUSOID
 # BEHAVIOR ITERATION: Function that switches to the next behavior in behavior array
 func set_behavior():
 	behavior_time = behavior_array[behavior_index]["duration"]
+	
+	var direction
+	if "direction" in behavior_array[behavior_index]:
+		direction = behavior_array[behavior_index]["direction"]
+		
 	match int(behavior_array[behavior_index]["behavior"]):
 		single_state.LINEAR:
 			pass
 		single_state.CURVE:
-			new_velocity = curve_direction
+			if typeof(direction) == TYPE_STRING and direction == "cross":
+				new_velocity = Vector2.LEFT
 			behavior_function = funcref(self, "set_curve")
 		single_state.LOOP:
 			behavior_function = funcref(self, "set_loop")
@@ -94,10 +99,17 @@ func set_behavior():
 			behavior_function = funcref(self, "set_sinusoid")
 		_:
 			pass
-	if "direction" in behavior_array[behavior_index]:
-		velocity = Vector2(behavior_array[behavior_index]["direction"]["x"], 
-						   behavior_array[behavior_index]["direction"]["y"])
 	behavior_index += 1
+
+# Returns a Vector2 determining what side Infected is on
+# Left side would return Vector2.LEFT, right side returns Vector2.RIGHT
+func get_relative_viewport_side():
+	var viewport_rect = get_viewport_rect()
+	var viewport_rect_midpoint = viewport_rect.position.x + (viewport_rect.size.x / 2)
+	if global_position.x < viewport_rect_midpoint:
+		return Vector2.LEFT
+	else:
+		return Vector2.RIGHT
 
 func motion_animation():
 	if velocity != Vector2.ZERO:
