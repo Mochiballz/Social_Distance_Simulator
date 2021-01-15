@@ -143,9 +143,9 @@ func _ready():
 	var spawnpoints_no_ends = spawnpoints_range.slice(1, spawnpoints_range.size() - 2)
 	var spawnpoints_center = [spawnpoints_size / 2]
 	
-	var round_0 = Round.new(60.0)
-	var round_1 = Round.new(30.0)
-	var round_2 = Round.new(80.0, 1)
+	var round_0 = Round.new(12.0)
+	var round_1 = Round.new(12.0)
+	var round_2 = Round.new(12.0)
 	var round_3 = Round.new()
 	var round_4 = Round.new()
 	
@@ -165,17 +165,33 @@ func _ready():
 	infected_pair["spawner_rate_end"] = 2.5
 	
 	# Curve
-	infected_curve["behavior_array"][0]["behavior"] = 1
-	infected_curve["behavior_array"][0]["direction"] = -1
+	var curve_behavior = { "behavior" : 1, "duration" : 3.5, "direction" : "cross"}
+	infected_curve["behavior_array"][0]["duration"] = 0.2
+	infected_curve["behavior_array"].push_back(curve_behavior)
+	infected_curve["spawner_rate_start"] = 2.0
+	infected_curve["spawner_rate_end"] = 2.5
+	
+	# Stop
+	var stop_behavior = { "behavior" : 3, "duration" : 2}
+	infected_stop["behavior_array"].push_back(stop_behavior)
+	infected_stop["spawner_rate_start"] = 2.0
+	infected_stop["spawner_rate_end"] = 2.5
 	
 	# Set spawnpoints
 	infected_default["spawners"] = spawnpoints_range
+	infected_pair["spawners"] = spawnpoints_range
+	infected_curve["spawners"] = spawnpoints_ends
+	infected_stop["spawners"] = spawnpoints_range
 	infected_karen["spawners"] = spawnpoints_range
 	item_revive["spawners"] = spawnpoints_range
 	
 	# CREATE ROUND ARRAYS
-	var entity_list_0 = [infected_karen, item_revive]
+	var entity_list_0 = [infected_default, infected_pair]
+	var entity_list_1 = [infected_default, infected_pair, infected_curve, item_revive]
+	var entity_list_2 = [infected_default, infected_pair, infected_curve, infected_stop]
 
 	round_0.add_entities(entity_list_0)
-	round_queue = [ round_0 ]
+	round_1.add_entities(entity_list_1)
+	round_2.add_entities(entity_list_2)
+	round_queue = [ round_0, round_1, round_2 ]
 

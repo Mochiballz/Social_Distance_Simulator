@@ -64,10 +64,10 @@ func set_loop(t): # LOOP
 	
 func set_stop(t): # STOP
 	if behavior_active:
-		$InfectionRange.repel_enabled = false
+#		$InfectionRange.repel_enabled = false
 		velocity = Vector2.ZERO
 	else:
-		$InfectionRange.repel_enabled = true
+#		$InfectionRange.repel_enabled = true
 		velocity = old_velocity
 	
 func set_sinusoid(t): # SINUSOID
@@ -89,7 +89,7 @@ func set_behavior():
 			pass
 		single_state.CURVE:
 			if typeof(direction) == TYPE_STRING and direction == "cross":
-				new_velocity = Vector2.LEFT
+				new_velocity = get_relative_viewport_side() * -1
 			behavior_function = funcref(self, "set_curve")
 		single_state.LOOP:
 			behavior_function = funcref(self, "set_loop")
