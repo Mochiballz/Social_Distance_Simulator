@@ -1,7 +1,7 @@
 {
 	"entity_type": "infected",
 	"entity_number": 1,
-	"speed": 350,
+	"speed": 320,
 	
 	"behavior_array": [ 
 		{"behavior" : 0, "duration" : 1} 
