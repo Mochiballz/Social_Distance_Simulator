@@ -1,13 +1,12 @@
 {
 	"entity_type": "infected",
-	"entity_number": 1,
-	"speed": 390,
+	"entity_number": 5,
+	"speed": 200,
 	
 	"behavior_array": [ 
-		{"behavior" : 0, "duration" : 1},
-		{"behavior" : 0, "duration" : 0.5, "direction" : { "x" : 0, "y" : 1 }},
+		{"behavior" : 4, "duration" : 2},
 	], 
-	"formation_array": 0,
+	"formation_array": 4,
 	
 	"odds": 1,
 	"spawners": [],

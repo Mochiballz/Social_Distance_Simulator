@@ -187,6 +187,7 @@ func _ready():
 	
 	# CREATE ROUND ARRAYS
 	var entity_list_0 = [infected_default, infected_pair]
+	var entity_test = [infected_karen]
 	var entity_list_1 = [infected_default, infected_pair, infected_curve, item_revive]
 	var entity_list_2 = [infected_default, infected_pair, infected_curve, infected_stop]
 
