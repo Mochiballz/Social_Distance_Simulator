@@ -7,4 +7,4 @@ func _ready():
 	infected_reference = get_parent()
 	radius = infected_reference.get_node("InfectionRange/CollisionShape2D").shape.radius
 	
-	$CollisionShape2D.shape.radius = radius * 1.6
+	$CollisionShape2D.shape.radius = radius
