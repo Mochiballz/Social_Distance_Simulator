@@ -1,6 +1,6 @@
 extends Node
 
-enum single_state {LINEAR, CURVE, LOOP, STOP, SINUSOID}
+enum single_state {LINEAR, CURVE, LOOP, STOP, SINUSOID, DAMPEN}
 enum group_state {WAVE_STATIC, WAVE_DIVERGE, WAVE_CONVERGE, WAVE_RANDOM, BLAST_UNIFORM, BLAST_RANDOM}
 
 # --- ENTITY TEMPLATE ---
@@ -9,6 +9,8 @@ enum group_state {WAVE_STATIC, WAVE_DIVERGE, WAVE_CONVERGE, WAVE_RANDOM, BLAST_U
 class EntityTemplate:
 	var speed : float
 	var entity_number : int
+	var entity_color : String
+	var type : String
 	
 	var behavior
 	var formation
@@ -46,6 +48,9 @@ class Round:
 		
 		template.speed = json["speed"]
 		template.entity_number = json["entity_number"]
+		if "entity_color" in json:
+			template.entity_color = json["entity_color"]
+		template.type = json["entity_type"]
 		
 		template.behavior = json["behavior_array"]
 		template.formation = int(json["formation_array"])
@@ -60,9 +65,9 @@ class Round:
 		template.aim_to_player = json["aim_to_player"]
 		template.seek_to_player = json["seek_to_player"]
 		
-		if json["entity_type"] == "infected":
+		if template.type == "infected":
 			in_queue.push_back(template)
-		elif json["entity_type"] == "item":
+		elif template.type == "item":
 			it_queue.push_back(template)
 		else:
 			pass
@@ -143,10 +148,10 @@ func _ready():
 	var spawnpoints_no_ends = spawnpoints_range.slice(1, spawnpoints_range.size() - 2)
 	var spawnpoints_center = [spawnpoints_size / 2]
 	
-	var round_0 = Round.new(12.0)
-	var round_1 = Round.new(12.0)
+	var round_0 = Round.new(20.0)
+	var round_1 = Round.new(20.0)
 	var round_2 = Round.new(12.0)
-	var round_3 = Round.new()
+	var round_3 = Round.new(30.0)
 	var round_4 = Round.new()
 	
 	# IMPORT JSON DATA - Infected/Item Types
@@ -156,26 +161,47 @@ func _ready():
 	var infected_curve = parse_template("res://Data/infected_default.json")
 	var infected_stop = parse_template("res://Data/infected_default.json")
 	var infected_karen = parse_template("res://Data/infected_karen.json")
+	var infected_fast = parse_template("res://Data/infected_default.json")
+	var infected_blast = parse_template("res://Data/infected_default.json")
 	var item_revive = parse_template("res://Data/item_revive.json")
 	
 	# Modify variables
 	# Pair
 	infected_pair["entity_number"] = 2
-	infected_pair["spawner_rate_start"] = 2.0
-	infected_pair["spawner_rate_end"] = 2.5
 	
 	# Curve
 	var curve_behavior = { "behavior" : 1, "duration" : 3.5, "direction" : "cross"}
 	infected_curve["behavior_array"][0]["duration"] = 0.2
 	infected_curve["behavior_array"].push_back(curve_behavior)
-	infected_curve["spawner_rate_start"] = 2.0
-	infected_curve["spawner_rate_end"] = 2.5
 	
 	# Stop
 	var stop_behavior = { "behavior" : 3, "duration" : 2}
+	infected_stop["entity_color"] = "blue"
 	infected_stop["behavior_array"].push_back(stop_behavior)
-	infected_stop["spawner_rate_start"] = 2.0
-	infected_stop["spawner_rate_end"] = 2.5
+	infected_stop["seek_to_player"] = true
+	
+	# Fast
+	var diag_behavior = { "behavior" : 0, "duration" : 1.0, "direction" : "diagonal"}
+	infected_fast["speed"] *= 3
+	infected_fast["spawner_rate_start"] = 1
+	infected_fast["spawner_rate_end"] = 2
+	infected_fast["behavior_array"][0] = diag_behavior
+	
+	# Blast
+	var curve_seek = { "behavior" : 1, "duration" : 2 }
+	infected_blast["entity_number"] = 5
+	infected_blast["spawner_rate_start"] = 4
+	infected_blast["spawner_rate_end"] = 5
+	infected_blast["spawner_delay"] = 2
+	infected_blast["formation_array"] = 4
+	infected_blast["seek_to_player"] = true
+	infected_blast["behavior_array"][0]["duration"] = 2.5
+	infected_blast["behavior_array"].push_back(curve_seek)
+	
+	
+	for inf in [infected_pair, infected_curve, infected_stop]:
+		inf["spawner_rate_start"] = 2.0
+		inf["spawner_rate_end"] = 2.5
 	
 	# Set spawnpoints
 	infected_default["spawners"] = spawnpoints_range
@@ -183,16 +209,20 @@ func _ready():
 	infected_curve["spawners"] = spawnpoints_ends
 	infected_stop["spawners"] = spawnpoints_range
 	infected_karen["spawners"] = spawnpoints_range
+	infected_fast["spawners"] = spawnpoints_ends
+	infected_blast["spawners"] = spawnpoints_center
 	item_revive["spawners"] = spawnpoints_range
 	
 	# CREATE ROUND ARRAYS
-	var entity_list_0 = [infected_default, infected_pair]
-	var entity_test = [infected_karen]
-	var entity_list_1 = [infected_default, infected_pair, infected_curve, item_revive]
+	var entity_list_0 = [infected_default, infected_karen, infected_pair]
+	var entity_test = [infected_stop]
+	var entity_list_1 = [infected_default, infected_pair, infected_fast, item_revive]
 	var entity_list_2 = [infected_default, infected_pair, infected_curve, infected_stop]
+	var entity_list_3 = [infected_blast]
 
 	round_0.add_entities(entity_list_0)
 	round_1.add_entities(entity_list_1)
 	round_2.add_entities(entity_list_2)
-	round_queue = [ round_0, round_1, round_2 ]
+	round_3.add_entities(entity_list_3)
+	round_queue = [ round_3 ]
 

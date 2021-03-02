@@ -10,7 +10,7 @@ export(float) onready var speed
 export(float) onready var normal_speed
 export(float) onready var dash_speed
 
-export(bool) onready var has_revive = false
+export(bool) onready var has_revive = true
 var overlapping_infected = false
 var is_dashing = false
 

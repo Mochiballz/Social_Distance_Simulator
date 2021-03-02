@@ -25,41 +25,41 @@ var infected = INFECTED_SCENE.instance()
 
 # Creates spawn timers for entity templates of current round
 func create_spawn_timers():
-	for i in range(current_round.in_queue.size()):
-		var spawn_timer = Timer.new()
-		var e = current_round.in_queue[i] # Current entity
-		
-		if current_round.ordered >= 1:
-			if i == current_in:
-				spawn_timer.set_paused(false)
-			else:
-				spawn_timer.set_paused(true)
-		
-		var rand_wait_time = spawn_rng.randf_range(e.spawn_rate_start, e.spawn_rate_end)
-		spawn_timer.set_wait_time(rand_wait_time)
-		spawn_timer.connect("timeout", self, "_on_SpawnTimer_timeout", [e, spawn_timer])
-		
-		$SpawnTimers/InfectedTimers.add_child(spawn_timer)
-	
-	for i in range(current_round.it_queue.size()):
-		var spawn_timer = Timer.new()
-		var e = current_round.it_queue[i]
-		
-		if current_round.ordered == 2:
-			if i == current_it:
-				spawn_timer.set_paused(false)
-			else:
-				spawn_timer.set_paused(true)
-		
-		var rand_wait_time = spawn_rng.randf_range(e.spawn_rate_start, e.spawn_rate_end)
-		spawn_timer.set_wait_time(rand_wait_time)
-		spawn_timer.connect("timeout", self, "_on_SpawnTimer_timeout", [e, spawn_timer])
-		
-		$SpawnTimers/ItemTimers.add_child(spawn_timer)
-	
+	# Array to deal with infected and item queues, with respectable current entity pointers
+	# and timer node containers
+	for q in [[current_round.in_queue, current_in, $SpawnTimers/InfectedTimers], 
+			  [current_round.it_queue, current_it, $SpawnTimers/ItemTimers]]:
+				
+		for i in range(q[0].size()):
+			var spawn_timer = Timer.new()
+			var spawn_delay = Timer.new()
+			var e = q[0][i] # Current entity
+			
+			if current_round.ordered >= 1:
+				if i == q[1]:
+					spawn_timer.set_paused(false)
+				else:
+					spawn_timer.set_paused(true)
+			
+			var rand_wait_time = spawn_rng.randf_range(e.spawn_rate_start, e.spawn_rate_end)
+			spawn_timer.set_wait_time(rand_wait_time)
+			spawn_timer.connect("timeout", self, "_on_SpawnTimer_timeout", [e, spawn_timer])
+			
+			if e.spawn_delay > 0:
+				spawn_delay.set_wait_time(e.spawn_delay)
+				spawn_delay.connect("timeout", self, "_on_SpawnDelay_timeout", [spawn_delay])
+				spawn_timer.add_child(spawn_delay)
+			
+			q[2].add_child(spawn_timer)
+
+
 func start_spawn_timers():
 	for t in ($SpawnTimers/InfectedTimers.get_children() + $SpawnTimers/ItemTimers.get_children()):
-		t.start()
+		if t.get_child_count() > 0:
+			t.get_child(0).start()
+			print("Delay started")
+		else:
+			t.start()
 
 	
 func clear_spawn_timers():
@@ -89,6 +89,7 @@ func spawn_infected(infected_template):
 	
 	for e in spawn_point.entities:
 		e.speed = infected_template.speed
+		e.color = infected_template.entity_color
 		e.seek_player = infected_template.seek_to_player
 		$Entities.add_child(e)
 	
@@ -123,7 +124,7 @@ func init_spawn():
 		for i in current_round.in_queue:
 			if i.spawn_rate_start < spawntime_min:
 				first_infected = i
-				spawntime_min = i.spaw_rate_start
+				spawntime_min = i.spawn_rate_start
 		spawn_infected(first_infected)
 	else:
 		spawn_infected(current_round.in_queue[current_in])
@@ -158,7 +159,7 @@ func _ready():
 	
 	$RoundTimer.set_wait_time(current_round.duration)
 	$RoundTimer.connect("timeout", self, "_on_RoundTimer_timeout")
-	init_spawn()
+#	init_spawn()
 	create_spawn_timers()
 	
 	$RoundTimer.start()
@@ -179,7 +180,7 @@ func _on_RoundTimer_timeout():
 	clear_spawn_timers()
 	if round_index == $Timeline.round_queue.size() - 1:
 		for r in $Timeline.round_queue:
-			r.change_difficulty(1)
+			r.change_difficulty(0.8)
 		
 	round_index = (round_index + 1) % $Timeline.round_queue.size()
 	current_round = $Timeline.round_queue[round_index]
@@ -196,7 +197,7 @@ func _on_RoundTimer_timeout():
 # Spawner Signal Functions
 func _on_SpawnTimer_timeout(template, timer):
 	var is_item = false
-	if template.speed > 0:
+	if template.type == "infected":
 		spawn_infected(template)
 	else:
 		is_item = true
@@ -235,6 +236,11 @@ func _on_SpawnTimer_timeout(template, timer):
 	timer.set_wait_time(rand_wait_time)
 	timer.start()
 	
+
+func _on_SpawnDelay_timeout(timer):
+	init_spawn()
+	timer.get_parent().start()
+	timer.stop()
 
 func _on_Retry_pressed():
 	game_over = false

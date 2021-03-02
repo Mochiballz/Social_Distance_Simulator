@@ -49,7 +49,7 @@ func _ready():
 	
 	random_speed_bound = 0.1
 	
-	blast_arc = PI / 4
+	blast_arc = PI / 3
 	blast_layers = 1
 
 	

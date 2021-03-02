@@ -1,14 +1,16 @@
-[gd_scene load_steps=12 format=2]
+[gd_scene load_steps=14 format=2]
 
 [ext_resource path="res://Scenes/Player.tscn" type="PackedScene" id=1]
-[ext_resource path="res://Resources/Fonts/Score_Custom_Font.tres" type="DynamicFont" id=2]
+[ext_resource path="res://Resources/Fonts/Doraemon48.tres" type="DynamicFont" id=2]
 [ext_resource path="res://Resources/Sprites/hand_sanitizer.png" type="Texture" id=3]
 [ext_resource path="res://Scripts/World.gd" type="Script" id=4]
 [ext_resource path="res://Scenes/SpawnPoint.tscn" type="PackedScene" id=5]
 [ext_resource path="res://Scripts/Timeline.gd" type="Script" id=6]
 [ext_resource path="res://Scenes/Terrain.tscn" type="PackedScene" id=7]
 [ext_resource path="res://Scripts/Map.gd" type="Script" id=8]
+[ext_resource path="res://Resources/Tileset_v0.3.4.tres" type="TileSet" id=9]
 [ext_resource path="res://Scripts/Interface.gd" type="Script" id=10]
+[ext_resource path="res://Resources/Fonts/Doraemon96.tres" type="DynamicFont" id=11]
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0.698039, 0.27451, 0.27451, 0.862745 )
@@ -92,6 +94,7 @@ position = Vector2( 1472, -128 )
 
 [node name="Player" parent="Entities" instance=ExtResource( 1 )]
 position = Vector2( 864, 447 )
+collision_mask = 1
 
 [node name="RoundTimer" type="Timer" parent="."]
 
@@ -100,120 +103,125 @@ margin_right = 40.0
 margin_bottom = 40.0
 script = ExtResource( 10 )
 __meta__ = {
-"_edit_group_": true,
 "_edit_use_anchors_": false
 }
 
 [node name="Score" type="Label" parent="Interface"]
-margin_left = 40.0
-margin_top = 40.0
-margin_right = 187.0
-margin_bottom = 84.0
-custom_fonts/font = ExtResource( 2 )
+margin_left = 32.0
+margin_top = 31.0
+margin_right = 289.0
+margin_bottom = 132.0
+custom_fonts/font = ExtResource( 11 )
 custom_colors/font_color = Color( 1, 0.980392, 0.513726, 1 )
-text = "SCORE: "
+text = "SCORE"
 __meta__ = {
-"_edit_group_": true,
 "_edit_use_anchors_": false
 }
 
 [node name="Points" type="Label" parent="Interface/Score"]
-margin_left = 147.0
-margin_right = 493.0
-margin_bottom = 44.0
-custom_fonts/font = ExtResource( 2 )
-text = "-1"
+anchor_left = 0.133
+anchor_right = 0.133
+margin_left = 218.273
+margin_right = 564.273
+margin_bottom = 101.0
+custom_fonts/font = ExtResource( 11 )
+text = "0"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="Items" type="Label" parent="Interface"]
-margin_left = 40.0
-margin_top = 895.0
-margin_right = 174.0
-margin_bottom = 939.0
-custom_fonts/font = ExtResource( 2 )
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_left = 32.0
+margin_top = 818.77
+margin_right = 272.0
+margin_bottom = 903.77
+custom_fonts/font = ExtResource( 11 )
 custom_colors/font_color = Color( 1, 0.980392, 0.513726, 1 )
 text = "ITEMS: "
 valign = 2
 __meta__ = {
-"_edit_group_": true,
 "_edit_use_anchors_": false
 }
 
 [node name="ReviveContainer" type="PanelContainer" parent="Interface/Items"]
 anchor_top = 0.364
 anchor_bottom = 0.364
-margin_left = 12.0
-margin_top = 31.984
-margin_right = 107.0
-margin_bottom = 111.984
+margin_left = 26.0
+margin_top = 54.06
+margin_right = 153.0
+margin_bottom = 161.06
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="Sprite" type="Sprite" parent="Interface/Items/ReviveContainer"]
 visible = false
-position = Vector2( 44.6043, 40 )
-scale = Vector2( 0.117986, 0.125 )
+position = Vector2( 60.5858, 52.8994 )
+scale = Vector2( 0.155469, 0.165026 )
 texture = ExtResource( 3 )
 
 [node name="GameOver" type="CenterContainer" parent="Interface"]
 pause_mode = 2
 visible = false
 margin_right = 1440.0
-margin_bottom = 1081.0
+margin_bottom = 1080.0
 __meta__ = {
-"_edit_group_": true,
 "_edit_use_anchors_": false
 }
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Interface/GameOver"]
-margin_left = 612.0
-margin_top = 506.0
-margin_right = 828.0
-margin_bottom = 574.0
-size_flags_horizontal = 3
+margin_left = 497.0
+margin_top = 473.0
+margin_right = 942.0
+margin_bottom = 607.0
 size_flags_vertical = 4
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="Label" type="Label" parent="Interface/GameOver/VBoxContainer"]
-margin_right = 216.0
-margin_bottom = 44.0
-custom_fonts/font = ExtResource( 2 )
-text = "Game Over!"
+margin_right = 445.0
+margin_bottom = 85.0
+custom_fonts/font = ExtResource( 11 )
+custom_colors/font_color = Color( 1, 0.52549, 0.52549, 1 )
+text = "GAME OVER!"
 
 [node name="Buttons" type="HBoxContainer" parent="Interface/GameOver/VBoxContainer"]
-margin_top = 48.0
-margin_right = 216.0
-margin_bottom = 68.0
+margin_top = 89.0
+margin_right = 445.0
+margin_bottom = 134.0
+size_flags_horizontal = 5
+size_flags_vertical = 4
 alignment = 1
 
 [node name="Retry" type="Button" parent="Interface/GameOver/VBoxContainer/Buttons"]
-margin_left = 26.0
-margin_right = 106.0
-margin_bottom = 20.0
+margin_left = 122.0
+margin_right = 234.0
+margin_bottom = 45.0
+grow_horizontal = 2
 rect_min_size = Vector2( 80, 20 )
 size_flags_horizontal = 4
-text = "Retry"
+custom_fonts/font = ExtResource( 2 )
+text = "RETRY"
 
 [node name="Quit" type="Button" parent="Interface/GameOver/VBoxContainer/Buttons"]
-margin_left = 110.0
-margin_right = 190.0
-margin_bottom = 20.0
+margin_left = 238.0
+margin_right = 323.0
+margin_bottom = 45.0
+grow_horizontal = 2
 rect_min_size = Vector2( 80, 20 )
 size_flags_horizontal = 4
-text = "Quit"
+custom_fonts/font = ExtResource( 2 )
+text = "QUIT"
 
 [node name="InfectedTimerBar" type="ProgressBar" parent="Interface"]
 visible = false
-anchor_left = 8.0
-anchor_top = 0.775
-anchor_right = 8.0
-anchor_bottom = 0.775
-margin_top = -1.90735e-06
+anchor_left = 8.8
+anchor_top = 24.475
+anchor_right = 8.8
+anchor_bottom = 24.475
 margin_right = 960.0
 margin_bottom = 48.0
 custom_styles/fg = SubResource( 1 )
@@ -233,6 +241,14 @@ current = true
 smoothing_enabled = true
 
 [node name="Tween" type="Tween" parent="Interface"]
+
+[node name="Borders" type="TileMap" parent="Interface"]
+visible = false
+modulate = Color( 1, 0, 0.772549, 1 )
+tile_set = ExtResource( 9 )
+cell_size = Vector2( 16, 16 )
+format = 1
+tile_data = PoolIntArray( 0, 31, 0, 1, 31, 0, 2, 31, 0, 3, 31, 0, 4, 31, 0, 5, 31, 0, 6, 31, 0, 7, 31, 0, 8, 31, 0, 9, 31, 0, 10, 31, 0, 11, 31, 0, 12, 31, 0, 13, 31, 0, 14, 31, 0, 15, 31, 0, 16, 31, 0, 17, 31, 0, 18, 31, 0, 19, 31, 0, 20, 31, 0, 21, 31, 0, 22, 31, 0, 23, 31, 0, 24, 31, 0, 25, 31, 0, 26, 31, 0, 27, 31, 0, 28, 31, 0, 29, 31, 0, 30, 31, 0, 31, 31, 0, 32, 31, 0, 33, 31, 0, 34, 31, 0, 35, 31, 0, 36, 31, 0, 37, 31, 0, 38, 31, 0, 39, 31, 0, 40, 31, 0, 41, 31, 0, 42, 31, 0, 43, 31, 0, 44, 31, 0, 45, 31, 0, 46, 31, 0, 47, 31, 0, 48, 31, 0, 49, 31, 0, 50, 31, 0, 51, 31, 0, 52, 31, 0, 53, 31, 0, 54, 31, 0, 55, 31, 0, 56, 31, 0, 57, 31, 0, 58, 31, 0, 59, 31, 0, 60, 31, 0, 61, 31, 0, 62, 31, 0, 63, 31, 0, 64, 31, 0, 65, 31, 0, 66, 31, 0, 67, 31, 0, 68, 31, 0, 69, 31, 0, 70, 31, 0, 71, 31, 0, 72, 31, 0, 73, 31, 0, 74, 31, 0, 75, 31, 0, 76, 31, 0, 77, 31, 0, 78, 31, 0, 79, 31, 0, 80, 31, 0, 81, 31, 0, 82, 31, 0, 83, 31, 0, 84, 31, 0, 85, 31, 0, 86, 31, 0, 87, 31, 0, 88, 31, 0, 89, 31, 0, 65536, 31, 0, 65625, 31, 0, 131072, 31, 0, 131161, 31, 0, 196608, 31, 0, 196697, 31, 0, 262144, 31, 0, 262233, 31, 0, 327680, 31, 0, 327769, 31, 0, 393216, 31, 0, 393305, 31, 0, 458752, 31, 0, 458841, 31, 0, 524288, 31, 0, 524377, 31, 0, 589824, 31, 0, 589913, 31, 0, 655360, 31, 0, 655449, 31, 0, 720896, 31, 0, 720985, 31, 0, 786432, 31, 0, 786521, 31, 0, 851968, 31, 0, 852057, 31, 0, 917504, 31, 0, 917593, 31, 0, 983040, 31, 0, 983129, 31, 0, 1048576, 31, 0, 1048665, 31, 0, 1114112, 31, 0, 1114201, 31, 0, 1179648, 31, 0, 1179737, 31, 0, 1245184, 31, 0, 1245273, 31, 0, 1310720, 31, 0, 1310809, 31, 0, 1376256, 31, 0, 1376345, 31, 0, 1441792, 31, 0, 1441881, 31, 0, 1507328, 31, 0, 1507417, 31, 0, 1572864, 31, 0, 1572953, 31, 0, 1638400, 31, 0, 1638489, 31, 0, 1703936, 31, 0, 1704025, 31, 0, 1769472, 31, 0, 1769561, 31, 0, 1835008, 31, 0, 1835097, 31, 0, 1900544, 31, 0, 1900633, 31, 0, 1966080, 31, 0, 1966169, 31, 0, 2031616, 31, 0, 2031705, 31, 0, 2097152, 31, 0, 2097241, 31, 0, 2162688, 31, 0, 2162777, 31, 0, 2228224, 31, 0, 2228313, 31, 0, 2293760, 31, 0, 2293849, 31, 0, 2359296, 31, 0, 2359385, 31, 0, 2424832, 31, 0, 2424921, 31, 0, 2490368, 31, 0, 2490457, 31, 0, 2555904, 31, 0, 2555993, 31, 0, 2621440, 31, 0, 2621529, 31, 0, 2686976, 31, 0, 2687065, 31, 0, 2752512, 31, 0, 2752601, 31, 0, 2818048, 31, 0, 2818137, 31, 0, 2883584, 31, 0, 2883673, 31, 0, 2949120, 31, 0, 2949209, 31, 0, 3014656, 31, 0, 3014745, 31, 0, 3080192, 31, 0, 3080281, 31, 0, 3145728, 31, 0, 3145817, 31, 0, 3211264, 31, 0, 3211353, 31, 0, 3276800, 31, 0, 3276889, 31, 0, 3342336, 31, 0, 3342425, 31, 0, 3407872, 31, 0, 3407961, 31, 0, 3473408, 31, 0, 3473497, 31, 0, 3538944, 31, 0, 3539033, 31, 0, 3604480, 31, 0, 3604569, 31, 0, 3670016, 31, 0, 3670105, 31, 0, 3735552, 31, 0, 3735641, 31, 0, 3801088, 31, 0, 3801177, 31, 0, 3866624, 31, 0, 3866713, 31, 0, 3932160, 31, 0, 3932249, 31, 0, 3997696, 31, 0, 3997785, 31, 0, 4063232, 31, 0, 4063321, 31, 0, 4128768, 31, 0, 4128857, 31, 0, 4194304, 31, 0, 4194393, 31, 0, 4259840, 31, 0, 4259929, 31, 0, 4325376, 31, 0, 4325377, 31, 0, 4325378, 31, 0, 4325379, 31, 0, 4325380, 31, 0, 4325381, 31, 0, 4325382, 31, 0, 4325383, 31, 0, 4325384, 31, 0, 4325385, 31, 0, 4325386, 31, 0, 4325387, 31, 0, 4325388, 31, 0, 4325389, 31, 0, 4325390, 31, 0, 4325391, 31, 0, 4325392, 31, 0, 4325393, 31, 0, 4325394, 31, 0, 4325395, 31, 0, 4325396, 31, 0, 4325397, 31, 0, 4325398, 31, 0, 4325399, 31, 0, 4325400, 31, 0, 4325401, 31, 0, 4325402, 31, 0, 4325403, 31, 0, 4325404, 31, 0, 4325405, 31, 0, 4325406, 31, 0, 4325407, 31, 0, 4325408, 31, 0, 4325409, 31, 0, 4325410, 31, 0, 4325411, 31, 0, 4325412, 31, 0, 4325413, 31, 0, 4325414, 31, 0, 4325415, 31, 0, 4325416, 31, 0, 4325417, 31, 0, 4325418, 31, 0, 4325419, 31, 0, 4325420, 31, 0, 4325421, 31, 0, 4325422, 31, 0, 4325423, 31, 0, 4325424, 31, 0, 4325425, 31, 0, 4325426, 31, 0, 4325427, 31, 0, 4325428, 31, 0, 4325429, 31, 0, 4325430, 31, 0, 4325431, 31, 0, 4325432, 31, 0, 4325433, 31, 0, 4325434, 31, 0, 4325435, 31, 0, 4325436, 31, 0, 4325437, 31, 0, 4325438, 31, 0, 4325439, 31, 0, 4325440, 31, 0, 4325441, 31, 0, 4325442, 31, 0, 4325443, 31, 0, 4325444, 31, 0, 4325445, 31, 0, 4325446, 31, 0, 4325447, 31, 0, 4325448, 31, 0, 4325449, 31, 0, 4325450, 31, 0, 4325451, 31, 0, 4325452, 31, 0, 4325453, 31, 0, 4325454, 31, 0, 4325455, 31, 0, 4325456, 31, 0, 4325457, 31, 0, 4325458, 31, 0, 4325459, 31, 0, 4325460, 31, 0, 4325461, 31, 0, 4325462, 31, 0, 4325463, 31, 0, 4325464, 31, 0, 4325465, 31, 0 )
 
 [node name="Timeline" type="Node" parent="."]
 script = ExtResource( 6 )

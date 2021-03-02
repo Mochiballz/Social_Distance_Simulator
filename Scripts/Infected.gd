@@ -2,7 +2,7 @@ extends KinematicBody2D
 
 class_name Infected
 
-enum single_state {LINEAR, CURVE, LOOP, STOP, SINUSOID}
+enum single_state {LINEAR, CURVE, LOOP, STOP, SINUSOID, DAMPEN}
 var distance = 0.0 # Measurement of distance traveled
 
 export(Vector2) var velocity = Vector2.DOWN
@@ -37,17 +37,19 @@ var old_velocity
 var new_velocity
 var old_speed
 
+var color
+
 # BEHAVIOR FUNCTIONS - Correspond to enumeration definitions in SpawnPoint.gd
 func default(t): # LINEAR
-	pass
+	velocity = new_velocity
 
 func set_curve(t): # CURVE
 	if behavior_active:
 		if seek_player:
-			if global_position.distance_to(get_node("/root/World/Entities/Player").global_position) < $InfectionRange/CollisionShape2D.shape.radius:
+			if get_distance_to_player() < $InfectionRange/CollisionShape2D.shape.radius:
 				velocity = Vector2.ZERO
 			else:
-				velocity = global_position.direction_to(get_node("/root/World/Entities/Player").global_position)
+				velocity = get_direction_to_player()
 			return
 			
 		var p0 = Vector2.ZERO
@@ -64,17 +66,34 @@ func set_loop(t): # LOOP
 	
 func set_stop(t): # STOP
 	if behavior_active:
+		if seek_player:
+			if get_distance_to_player() > $InfectionRange/CollisionShape2D.shape.radius * 1.4:
+				new_velocity = (new_velocity + get_direction_to_player()).clamped(1.0)
+				velocity = new_velocity
+				$BehaviorDuration.start(behavior_time)
 #		$InfectionRange.repel_enabled = false
-		velocity = Vector2.ZERO
+			else:
+				velocity = Vector2.ZERO
+				seek_player = false
 	else:
 #		$InfectionRange.repel_enabled = true
 		velocity = old_velocity
 	
 func set_sinusoid(t): # SINUSOID
 	if behavior_active:
-		var amplitude = sin(t * (4 * PI)) * 2
+		if seek_player:
+			old_velocity = (old_velocity + (get_direction_to_player() * 0.04)).clamped(1.0)
+		var amplitude = sin(t * 12 * PI)
 		var sine_vector = old_velocity.tangent() * amplitude
-		velocity = old_velocity + sine_vector
+		velocity = (old_velocity + sine_vector).clamped(1.0)
+
+func set_dampen(t):
+	if behavior_active:
+		if seek_player:
+			old_velocity = (old_velocity + (get_direction_to_player() * 0.04)).clamped(1.0)
+		var amplitude = sin(t * 12 * PI) * ease(1 - t, 4)
+		var sine_vector = old_velocity.tangent() * amplitude
+		velocity = (old_velocity + sine_vector).clamped(1.0)
 
 # BEHAVIOR ITERATION: Function that switches to the next behavior in behavior array
 func set_behavior():
@@ -86,7 +105,11 @@ func set_behavior():
 		
 	match int(behavior_array[behavior_index]["behavior"]):
 		single_state.LINEAR:
-			pass
+			if typeof(direction) == TYPE_STRING and direction == "diagonal":
+				new_velocity = ((get_relative_viewport_side() * -1) + Vector2.DOWN).normalized()
+			else:
+				new_velocity = velocity
+			behavior_function = funcref(self, "default")
 		single_state.CURVE:
 			if typeof(direction) == TYPE_STRING and direction == "cross":
 				new_velocity = get_relative_viewport_side() * -1
@@ -94,12 +117,24 @@ func set_behavior():
 		single_state.LOOP:
 			behavior_function = funcref(self, "set_loop")
 		single_state.STOP:
+			new_velocity = old_velocity
 			behavior_function = funcref(self, "set_stop")
 		single_state.SINUSOID:
 			behavior_function = funcref(self, "set_sinusoid")
+		single_state.DAMPEN:
+			behavior_function = funcref(self, "set_dampen")
 		_:
 			pass
 	behavior_index += 1
+
+func set_color():
+	match color:
+		"green":
+			$SpriteGroup.modulate = Color(0.4,1,0.4,1)
+		"blue":
+			$SpriteGroup.modulate = Color(0.3,0.3,1,1)
+		_:
+			pass
 
 # Returns a Vector2 determining what side Infected is on
 # Left side would return Vector2.LEFT, right side returns Vector2.RIGHT
@@ -110,6 +145,12 @@ func get_relative_viewport_side():
 		return Vector2.LEFT
 	else:
 		return Vector2.RIGHT
+
+func get_distance_to_player():
+	return global_position.distance_to(get_node("/root/World/Entities/Player").global_position)
+
+func get_direction_to_player():
+	return global_position.direction_to(get_node("/root/World/Entities/Player").global_position)
 
 func motion_animation():
 	if velocity != Vector2.ZERO:
@@ -141,6 +182,7 @@ func _ready():
 	old_velocity = velocity
 	old_speed = speed
 	set_behavior()
+	set_color()
 	
 	$CoughTimer.set_wait_time(cough_wait_time)
 	$CoughDuration.set_wait_time(cough_duration_time)
