@@ -11,7 +11,7 @@
 	"odds": 1,
 	"spawners": [],
 	"spawner_rate_start": 10.0,
-	"spawner_rate_end": 10.0,
+	"spawner_rate_end": 18.0,
 	"spawner_delay": 0,
 	
 	"aim_to_player": false,

@@ -1,20 +1,23 @@
 {
 	"entity_type": "infected",
-	"entity_number": 5,
-	"speed": 200,
+	"entity_number": 1,
+	"entity_color": "green",
+	"speed": 350,
 	
 	"behavior_array": [ 
-		{"behavior" : 4, "duration" : 2},
+		{"behavior" : 0, "duration" : 1},
+		{"behavior" : 4, "duration" : 3.5},
+		{"behavior" : 5, "duration" : 2}
 	], 
-	"formation_array": 4,
+	"formation_array": 3,
 	
 	"odds": 1,
 	"spawners": [],
-	"spawner_rate_start": 3,
+	"spawner_rate_start": 2,
 	"spawner_rate_end": 5,
 	"spawner_delay": 0,
 	
 	"aim_to_player": true,
-	"seek_to_player": false
+	"seek_to_player": true
 
 }
