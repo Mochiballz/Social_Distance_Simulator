@@ -45,10 +45,9 @@ func create_spawn_timers():
 			spawn_timer.set_wait_time(rand_wait_time)
 			spawn_timer.connect("timeout", self, "_on_SpawnTimer_timeout", [e, spawn_timer])
 			
-			if e.spawn_delay > 0:
-				spawn_delay.set_wait_time(e.spawn_delay)
-				spawn_delay.connect("timeout", self, "_on_SpawnDelay_timeout", [spawn_delay])
-				spawn_timer.add_child(spawn_delay)
+			spawn_delay.set_wait_time(e.spawn_delay)
+			spawn_delay.connect("timeout", self, "_on_SpawnDelay_timeout", [spawn_delay])
+			spawn_timer.add_child(spawn_delay)
 			
 			q[2].add_child(spawn_timer)
 
@@ -159,7 +158,7 @@ func _ready():
 	
 	$RoundTimer.set_wait_time(current_round.duration)
 	$RoundTimer.connect("timeout", self, "_on_RoundTimer_timeout")
-#	init_spawn()
+	init_spawn()
 	create_spawn_timers()
 	
 	$RoundTimer.start()
@@ -188,7 +187,7 @@ func _on_RoundTimer_timeout():
 	current_it = 0
 	
 	$RoundTimer.set_wait_time(current_round.duration)
-	init_spawn()
+#	init_spawn()
 	create_spawn_timers()
 	
 	$RoundTimer.start()
@@ -238,7 +237,6 @@ func _on_SpawnTimer_timeout(template, timer):
 	
 
 func _on_SpawnDelay_timeout(timer):
-	init_spawn()
 	timer.get_parent().start()
 	timer.stop()
 

@@ -126,6 +126,7 @@ class Round:
 			
 	func change_difficulty(n): # n = the magnitude of difficulty increase (n = 1 does nothing)
 		for i in in_queue:
+			i.speed = i.speed * (2 - n)
 			i.spawn_rate_start = i.spawn_rate_start * n
 			i.spawn_rate_end = i.spawn_rate_end * n
 		
@@ -150,9 +151,9 @@ func _ready():
 	
 	var round_0 = Round.new(20.0)
 	var round_1 = Round.new(20.0)
-	var round_2 = Round.new(12.0)
-	var round_3 = Round.new(30.0)
-	var round_4 = Round.new()
+	var round_2 = Round.new(20.0)
+	var round_3 = Round.new(20.0)
+	var round_4 = Round.new(20.0, 1)
 	
 	# IMPORT JSON DATA - Infected/Item Types
 	# Parse .json files to dictionaries
@@ -168,28 +169,33 @@ func _ready():
 	# Modify variables
 	# Pair
 	infected_pair["entity_number"] = 2
+	infected_pair["formation_array"] = 1
+	infected_pair["aim_to_player"] = true
 	
 	# Curve
 	var curve_behavior = { "behavior" : 1, "duration" : 3.5, "direction" : "cross"}
-	infected_curve["behavior_array"][0]["duration"] = 0.2
+	infected_curve["behavior_array"][0]["duration"] = 0.75
+	infected_curve["aim_to_player"] = true
 	infected_curve["behavior_array"].push_back(curve_behavior)
 	
 	# Stop
-	var stop_behavior = { "behavior" : 3, "duration" : 2}
+	var stop_behavior = { "behavior" : 3, "duration" : 8}
 	infected_stop["entity_color"] = "blue"
 	infected_stop["behavior_array"].push_back(stop_behavior)
 	infected_stop["seek_to_player"] = true
 	
 	# Fast
 	var diag_behavior = { "behavior" : 0, "duration" : 1.0, "direction" : "diagonal"}
+	infected_fast["entity_number"] = 3
+	infected_fast["entity_color"] = "yellow"
 	infected_fast["speed"] *= 3
 	infected_fast["spawner_rate_start"] = 1
 	infected_fast["spawner_rate_end"] = 2
 	infected_fast["behavior_array"][0] = diag_behavior
 	
 	# Blast
-	var curve_seek = { "behavior" : 1, "duration" : 2 }
-	infected_blast["entity_number"] = 5
+	var curve_seek = { "behavior" : 3, "duration" : 2 }
+	infected_blast["entity_number"] = 7
 	infected_blast["spawner_rate_start"] = 4
 	infected_blast["spawner_rate_end"] = 5
 	infected_blast["spawner_delay"] = 2
@@ -217,12 +223,14 @@ func _ready():
 	var entity_list_0 = [infected_default, infected_karen, infected_pair]
 	var entity_test = [infected_stop]
 	var entity_list_1 = [infected_default, infected_pair, infected_fast, item_revive]
-	var entity_list_2 = [infected_default, infected_pair, infected_curve, infected_stop]
-	var entity_list_3 = [infected_blast]
+	var entity_list_2 = [infected_default, infected_pair, infected_stop]
+	var entity_list_3 = [infected_blast, item_revive]
+	var entity_list_4 = [infected_pair, infected_curve]
 
 	round_0.add_entities(entity_list_0)
 	round_1.add_entities(entity_list_1)
 	round_2.add_entities(entity_list_2)
 	round_3.add_entities(entity_list_3)
-	round_queue = [ round_3 ]
+	round_4.add_entities(entity_list_4)
+	round_queue = [ round_3, round_4 ]
 

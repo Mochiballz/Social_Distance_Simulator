@@ -67,10 +67,9 @@ func set_loop(t): # LOOP
 func set_stop(t): # STOP
 	if behavior_active:
 		if seek_player:
-			if get_distance_to_player() > $InfectionRange/CollisionShape2D.shape.radius * 1.4:
+			if get_distance_to_player() > $InfectionRange/CollisionShape2D.shape.radius * 1.25:
 				new_velocity = (new_velocity + get_direction_to_player()).clamped(1.0)
 				velocity = new_velocity
-				$BehaviorDuration.start(behavior_time)
 #		$InfectionRange.repel_enabled = false
 			else:
 				velocity = Vector2.ZERO
@@ -112,7 +111,7 @@ func set_behavior():
 			behavior_function = funcref(self, "default")
 		single_state.CURVE:
 			if typeof(direction) == TYPE_STRING and direction == "cross":
-				new_velocity = get_relative_viewport_side() * -1
+				new_velocity = Vector2(old_velocity.x * -1, old_velocity.y)
 			behavior_function = funcref(self, "set_curve")
 		single_state.LOOP:
 			behavior_function = funcref(self, "set_loop")
